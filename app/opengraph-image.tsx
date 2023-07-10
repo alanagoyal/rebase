@@ -16,7 +16,7 @@ export default async function handler() {
           alignItems: "center",
         }}
       >
-        Project Name 🤗
+        Re:base 📧
       </div>
     ),
     {

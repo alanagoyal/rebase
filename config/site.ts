@@ -3,15 +3,23 @@ export type SiteConfig = typeof siteConfig;
 require("dotenv").config();
 
 export const siteConfig = {
-  name: "Project Name",
-  description: "Project description",
-  authorName: "Author Name",
+  name: "Re:base",
+  description: "The open-source email platform",
+  authorName: "Alana Goyal",
   url: process.env.SITE_URL!,
   ogImage: `${process.env.SITE_URL}/opengraph-image`,
   mainNav: [
     {
       title: "Home",
       href: "/",
+    },
+    {
+      title: "Members",
+      href: "/members",
+    },
+    {
+      title: "Mailbox",
+      href: "/mailbox",
     },
   ],
   links: {
