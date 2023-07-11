@@ -7,8 +7,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Database } from "@/types/supabase";
 
-export function MembersTable({ members }: { members: any }) {
+type Member = Database["public"]["Tables"]["members"]["Row"];
+
+export function MembersTable({ members }: { members: Member[] }) {
   return (
     <Table>
       <TableHeader>
@@ -25,7 +28,9 @@ export function MembersTable({ members }: { members: any }) {
               {member.first_name} {member.last_name}
             </TableCell>
             <TableCell>{member.email}</TableCell>
-            <TableCell>{member.created_at}</TableCell>
+            <TableCell>
+              {new Date(member.created_at).toLocaleString("en-US")}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

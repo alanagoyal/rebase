@@ -26,7 +26,11 @@ import { toast } from "@/components/ui/use-toast";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 const memberFormSchema = z.object({
-  email: z.string().optional(),
+  email: z
+    .string({
+      required_error: "Please select an email to display.",
+    })
+    .email(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
 });
@@ -63,22 +67,27 @@ export default function MemberForm({ user }: { user: any }) {
     }
   }
 
+  // TODO: close dialog on submit
   return (
     <div>
-      <div className="grid gap-4 py-4">
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">Add Member</Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-[425px]">
-                <DialogHeader>
-                  <DialogTitle>New Member</DialogTitle>
-                  <DialogDescription>
-                    Please enter the first name, last name, and email
-                  </DialogDescription>
-                </DialogHeader>{" "}
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">Add Member</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>New Member</DialogTitle>
+            <DialogDescription>
+              Please enter the first name, last name, and email
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                {" "}
                 <FormField
                   control={form.control}
                   name="email"
@@ -133,11 +142,11 @@ export default function MemberForm({ user }: { user: any }) {
                     Add
                   </Button>
                 </div>
-              </DialogContent>
-            </Dialog>
-          </form>
-        </Form>
-      </div>
+              </form>
+            </Form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -20,12 +20,10 @@ export default async function Members() {
     status,
   } = await supabase.from("members").select("*").eq("created_by", user.id);
 
-  console.log(members);
-
   return (
     <div>
       <MemberForm user={user} />
-      <MembersTable members={members} />
+      <MembersTable members={members!} />
     </div>
   );
 }
