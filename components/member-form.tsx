@@ -69,7 +69,7 @@ export default function MemberForm({ user }: { user: any }) {
 
   // TODO: close dialog on submit
   return (
-    <div>
+    <div className="flex-col justify-end">
       <Dialog>
         <DialogTrigger asChild>
           <Button variant="outline">Add Member</Button>

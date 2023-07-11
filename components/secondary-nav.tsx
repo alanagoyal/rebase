@@ -3,12 +3,25 @@ import Link from "next/link";
 import { User, Mail } from "lucide-react";
 import { NavItem } from "@/types/nav";
 import { cn } from "@/lib/utils";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-interface MainNavProps {
+interface SecondaryNavProps {
   items?: NavItem[];
 }
 
-export function MainNav({ items }: MainNavProps) {
+export async function SecondaryNav({ items }: SecondaryNavProps) {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
+
   return (
     <div className="flex gap-6 md:gap-10">
       {items?.length ? (
@@ -24,11 +37,9 @@ export function MainNav({ items }: MainNavProps) {
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  {item.title === "Home" && (
-                    <div>
-                      <span className="text-[#FAACA8] text-3xl">Re:</span>
-                    </div>
-                  )}
+                  {item.title === "Members" && <User className="w-6 h-6 p-1" />}
+                  {item.title === "Mailbox" && <Mail className="w-6 h-6 p-1" />}
+                  {item.title}
                 </Link>
               )
           )}

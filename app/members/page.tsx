@@ -21,7 +21,7 @@ export default async function Members() {
   } = await supabase.from("members").select("*").eq("created_by", user.id);
 
   return (
-    <div>
+    <div className="">
       <MemberForm user={user} />
       <MembersTable members={members!} />
     </div>
