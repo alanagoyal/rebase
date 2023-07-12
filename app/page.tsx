@@ -1,26 +1,7 @@
-"use client";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import Link from "next/link";
-
-import { Button, buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
+import AuthButton from "./auth-button";
 
-export default async function Index() {
-  const supabase = createClientComponentClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  async function signInWithGoogle() {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: `${siteConfig.url}/account/`,
-      },
-    });
-  }
-
+export default function Index() {
   return (
     <div className="flex flex-col min-h-screen">
       <main className="container mx-auto my-48 flex-grow">
@@ -33,23 +14,7 @@ export default async function Index() {
               {siteConfig.description}
             </p>
           </div>
-          <div className="flex gap-4">
-            <Button
-              onClick={signInWithGoogle}
-              className=" text-white px-8 py-4 rounded-md text-base"
-              style={{
-                background: "linear-gradient(19deg, #FAACA8 0%, #DDD6F3 100%)",
-              }}
-            >
-              Get Started
-            </Button>
-            <Link
-              href={siteConfig.links.github}
-              className={buttonVariants({ variant: "ghost" })}
-            >
-              View on Github
-            </Link>
-          </div>
+          <AuthButton />
         </section>
       </main>
 
