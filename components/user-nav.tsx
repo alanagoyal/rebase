@@ -18,26 +18,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function UserNav() {
+export default function UserNav(user: any) {
   const supabase = createClientComponentClient();
-  const [user, setUser] = useState<any>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        setUser(user);
-      }
-    };
-
-    getUser();
-  }, [supabase, setUser]);
-
   const handleSignOut = async () => {
-    setUser(null);
     await supabase.auth.signOut();
     router.push("/");
   };

@@ -11,17 +11,7 @@ interface SecondaryNavProps {
   items?: NavItem[];
 }
 
-export async function SecondaryNav({ items }: SecondaryNavProps) {
-  const supabase = createServerComponentClient({ cookies });
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/");
-  }
-
+export function SecondaryNav(user: any, { items }: SecondaryNavProps) {
   return (
     <div className="flex gap-6 md:gap-10">
       {items?.length ? (

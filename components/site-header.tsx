@@ -7,8 +7,20 @@ import { MainNav } from "@/components/main-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
 import UserNav from "./user-nav";
 import { SecondaryNav } from "./secondary-nav";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-export function SiteHeader() {
+export async function SiteHeader() {
+  const supabase = createServerComponentClient({ cookies });
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/");
+  }
   return (
     <div>
       <header className="sticky top-0 z-40 w-full border-b bg-background">
@@ -32,7 +44,7 @@ export function SiteHeader() {
                 </div>
               </Link>
               <ThemeToggle />
-              <UserNav />
+              <UserNav user={user} />
             </nav>
           </div>
         </div>
@@ -41,7 +53,7 @@ export function SiteHeader() {
         <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
           <div className="flex flex-1 items-center justify-end space-x-4">
             <nav className="flex items-center space-x-1">
-              <SecondaryNav items={siteConfig.secondaryNav} />
+              <SecondaryNav user={user} items={siteConfig.secondaryNav} />
             </nav>
           </div>
         </div>
