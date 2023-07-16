@@ -16,9 +16,8 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function UserNav(user: any) {
+export default function UserNav({ user }: any) {
   const supabase = createClientComponentClient();
   const router = useRouter();
   const handleSignOut = async () => {

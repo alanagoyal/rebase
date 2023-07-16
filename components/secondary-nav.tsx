@@ -11,7 +11,7 @@ interface SecondaryNavProps {
   items?: NavItem[];
 }
 
-export function SecondaryNav(user: any, { items }: SecondaryNavProps) {
+export function SecondaryNav({ items }: SecondaryNavProps) {
   return (
     <div className="flex gap-6 md:gap-10">
       {items?.length ? (
