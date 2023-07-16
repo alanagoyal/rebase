@@ -9,7 +9,6 @@ export default function AuthButton() {
   const supabase = createClientComponentClient();
 
   async function signInWithGoogle() {
-    console.log("in auth button");
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {

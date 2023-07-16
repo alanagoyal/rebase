@@ -18,8 +18,6 @@ export async function SiteHeader() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  console.log(user);
-
   // if (!user) {
   //   redirect("/");
   // }

@@ -18,7 +18,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function UserNav({ user }: any) {
-  console.log(user);
   const supabase = createClientComponentClient();
   const router = useRouter();
   const handleSignOut = async () => {
