@@ -4,15 +4,17 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function AuthButton() {
   const supabase = createClientComponentClient();
+  const router = useRouter();
 
   async function signInWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${siteConfig.url}/account/`,
+        redirectTo: `http://localhost:3000/account`,
       },
     });
   }
