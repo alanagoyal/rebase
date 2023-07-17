@@ -12,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -24,6 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import React from "react";
+import { MembersTable } from "./members-table";
 
 const memberFormSchema = z.object({
   email: z
@@ -37,7 +38,14 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
-export default function MemberForm({ user }: { user: any }) {
+export default function MemberForm({
+  user,
+  members,
+}: {
+  user: any;
+  members: any;
+}) {
+  const [open, setOpen] = React.useState(false);
   const supabase = createClientComponentClient();
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
@@ -67,86 +75,98 @@ export default function MemberForm({ user }: { user: any }) {
     }
   }
 
-  // TODO: close dialog on submit
   return (
-    <div className="flex-col justify-end">
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">Add Member</Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>New Member</DialogTitle>
-            <DialogDescription>
-              Please enter the first name, last name, and email
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                {" "}
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base mx-2">Email</FormLabel>
-                      </div>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="first_name"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base mx-2">
-                          First Name
-                        </FormLabel>
-                      </div>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="last_name"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                      <div className="space-y-0.5">
-                        <FormLabel className="text-base mx-2">
-                          Last Name
-                        </FormLabel>
-                      </div>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-                <div className="py-1 flex justify-center">
-                  <Button
-                    type="submit"
-                    className="bg-[#9FACE6] text-white font-bold py-2 px-4 rounded w-full"
+    <div className="flex-1 space-y-4 p-8 pt-6">
+      <div className="flex items-center justify-between space-y-2">
+        <h2 className="text-3xl font-bold tracking-tight">Members</h2>
+        <div className="flex items-center space-x-2">
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">Add Member</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>New Member</DialogTitle>
+                <DialogDescription>
+                  Please enter the first name, last name, and email
+                </DialogDescription>
+              </DialogHeader>
+              <div className="grid gap-4 py-4">
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="space-y-8"
                   >
-                    Add
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </div>
-        </DialogContent>
-      </Dialog>
+                    {" "}
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base mx-2">
+                              Email
+                            </FormLabel>
+                          </div>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="first_name"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base mx-2">
+                              First Name
+                            </FormLabel>
+                          </div>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="last_name"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                          <div className="space-y-0.5">
+                            <FormLabel className="text-base mx-2">
+                              Last Name
+                            </FormLabel>
+                          </div>
+                          <FormControl>
+                            <Input {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    <div className="py-1 flex justify-center">
+                      <Button
+                        type="submit"
+                        onClick={() => {
+                          setOpen(false);
+                        }}
+                        className="bg-[#9FACE6] text-white font-bold py-2 px-4 rounded w-full"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                  </form>
+                </Form>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      </div>
+      <div className="flex">
+        <MembersTable members={members} />
+      </div>
     </div>
   );
 }

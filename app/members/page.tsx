@@ -22,8 +22,7 @@ export default async function Members() {
 
   return (
     <div className="">
-      <MemberForm user={user} />
-      <MembersTable members={members!} />
+      <MemberForm user={user} members={members!} />
     </div>
   );
 }
