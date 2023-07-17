@@ -82,7 +82,7 @@ export default function MemberForm({
         <div className="flex items-center space-x-2">
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">Add Member</Button>
+              <Button>Add Member</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
