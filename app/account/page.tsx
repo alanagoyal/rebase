@@ -36,9 +36,7 @@ export default function Account() {
   return (
     <div className="flex flex-col items-center min-h-screen pt-20 py-2">
       <h1 className="text-4xl font-bold mb-4">Your Account</h1>
-      {user && name && email && (
-        <AccountForm user={user.id} name={name} email={email} />
-      )}
+      {user && <AccountForm user={user.id} name={name} email={email} />}
     </div>
   );
 }

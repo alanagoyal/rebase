@@ -19,11 +19,13 @@ import {
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
+import EditMemberForm from "./edit-member";
 
 type Member = Database["public"]["Tables"]["members"]["Row"];
 
 export function MembersTable({ members }: { members: Member[] }) {
   const supabase = createClientComponentClient();
+
   const router = useRouter();
 
   async function onDelete(id: string) {
@@ -57,6 +59,16 @@ export function MembersTable({ members }: { members: Member[] }) {
             <TableCell>{member.email}</TableCell>
             <TableCell>
               {new Date(member.created_at).toLocaleString("en-US")}
+            </TableCell>
+            <TableCell>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <EditMemberForm member={member} />
+                  </TooltipTrigger>
+                  <TooltipContent>Edit Link</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </TableCell>
             <TableCell>
               <TooltipProvider>
