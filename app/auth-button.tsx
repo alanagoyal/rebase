@@ -15,10 +15,9 @@ export default function AuthButton() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `http://localhost:3000/account`,
+        redirectTo: `${location.origin}/auth/callback`,
       },
     });
-    revalidatePath("/account");
   }
 
   return (

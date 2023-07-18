@@ -1,3 +1,4 @@
+"use client";
 import {
   Table,
   TableBody,
@@ -8,10 +9,36 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Database } from "@/types/supabase";
+import { Trash } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { toast } from "./ui/use-toast";
+import { useRouter } from "next/navigation";
 
 type Member = Database["public"]["Tables"]["members"]["Row"];
 
 export function MembersTable({ members }: { members: Member[] }) {
+  const supabase = createClientComponentClient();
+  const router = useRouter();
+
+  async function onDelete(id: string) {
+    try {
+      let { error } = await supabase.from("members").delete().eq("id", id);
+      if (error) throw error;
+      toast({
+        description: "Your member has been deleted",
+      });
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -30,6 +57,20 @@ export function MembersTable({ members }: { members: Member[] }) {
             <TableCell>{member.email}</TableCell>
             <TableCell>
               {new Date(member.created_at).toLocaleString("en-US")}
+            </TableCell>
+            <TableCell>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Trash
+                      className="h-4 w-4 ml-4 text-muted-foreground"
+                      onClick={() => onDelete(member.id)}
+                      style={{ cursor: "pointer" }}
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent>Delete Link</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </TableCell>
           </TableRow>
         ))}

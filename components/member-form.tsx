@@ -25,6 +25,7 @@ import { toast } from "@/components/ui/use-toast";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { MembersTable } from "./members-table";
+import { useRouter } from "next/navigation";
 
 const memberFormSchema = z.object({
   email: z
@@ -47,6 +48,7 @@ export default function MemberForm({
 }) {
   const [open, setOpen] = React.useState(false);
   const supabase = createClientComponentClient();
+  const router = useRouter();
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
     defaultValues: {
@@ -70,6 +72,7 @@ export default function MemberForm({
       toast({
         description: "Your member has been added",
       });
+      router.refresh();
     } catch (error) {
       console.log(error);
     }

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Tiptap from "@/components/tiptap";
 
 export default function Mailbox() {
   return (
@@ -9,6 +10,7 @@ export default function Mailbox() {
           <Button>New Message</Button>
         </div>
       </div>
+      <Tiptap />
     </div>
   );
 }
