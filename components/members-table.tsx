@@ -66,7 +66,7 @@ export function MembersTable({ members }: { members: Member[] }) {
                   <TooltipTrigger>
                     <EditMemberForm member={member} />
                   </TooltipTrigger>
-                  <TooltipContent>Edit Link</TooltipContent>
+                  <TooltipContent>Edit Member</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </TableCell>
@@ -80,7 +80,7 @@ export function MembersTable({ members }: { members: Member[] }) {
                       style={{ cursor: "pointer" }}
                     />
                   </TooltipTrigger>
-                  <TooltipContent>Delete Link</TooltipContent>
+                  <TooltipContent>Delete Member</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </TableCell>
