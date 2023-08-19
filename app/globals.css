@@ -75,4 +75,9 @@
   body {
     @apply bg-background text-foreground;
   }
+  .banner {
+    background-color: #D6BCFA;
+    color: white;
+    padding: 10px;
+  }
 }
