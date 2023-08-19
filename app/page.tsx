@@ -4,6 +4,9 @@ import AuthButton from "./auth-button";
 export default function Index() {
   return (
     <div className="flex flex-col min-h-screen">
+      <div className="banner">
+        <a href="https://basecase.vc/blog/building-with-the-batch">Read about how we build Rebase</a>
+      </div>
       <main className="container mx-auto my-48 flex-grow">
         <section className="container grid items-center gap-6 pb-8 pt-6 md:py-10">
           <div className="flex max-w-[980px] flex-col items-start gap-2">
