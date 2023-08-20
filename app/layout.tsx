@@ -49,7 +49,9 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <div className="relative flex min-h-screen flex-col">
             <div className="banner">
-              <a href="https://basecase.vc/blog/building-with-the-batch">Read about how we build Rebase</a>
+              <a href="https://basecase.vc/blog/building-with-the-batch">
+                Read about how we built Rebase 👉🏼
+              </a>
             </div>
             <SiteHeader />
             <Toaster />
