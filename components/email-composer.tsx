@@ -104,6 +104,11 @@ export default function EmailComposer({
         },
         body: JSON.stringify(newEmailData),
       });
+
+      const { data: newEmail, error: insertError } = await supabase
+        .from("emails")
+        .insert([newEmailData]);
+
       if (response.ok) {
         console.log("Email sent successfully");
         onSend();
