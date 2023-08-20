@@ -26,6 +26,8 @@ import {
   createServerActionClient,
   createServerComponentClient,
 } from "@supabase/auth-helpers-nextjs";
+import { Resend } from "resend";
+import type { NextApiRequest, NextApiResponse } from "next";
 
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -37,6 +39,8 @@ export default function EmaiLComposer({
   supabase: SupabaseClient;
   userEmail: string;
 }) {
+  const { register, handleSubmit, reset } = useForm();
+  const [isSending, setIsSending] = useState(false);
   const emailFormSchema = z.object({
     to_emails: z.string().refine(
       (value) => {
@@ -49,8 +53,8 @@ export default function EmaiLComposer({
         message: "Please enter valid email addresses separated by commas.",
       }
     ),
-    subject: z.string().optional(),
-    body: z.string().optional(),
+    subject: z.string(),
+    body: z.string(),
     cc: z
       .array(
         z.string().email({ message: "Please enter a valid email address." })
@@ -78,10 +82,9 @@ export default function EmaiLComposer({
     },
   });
 
-  async function onSubmit(data: EmailFormValues) {
-    console.log("submitting", data);
-
+  const onSubmit = async (data: EmailFormValues) => {
     try {
+      setIsSending(true);
       const newEmailData = {
         to_emails: [data.to_emails],
         subject: data.subject,
@@ -92,19 +95,66 @@ export default function EmaiLComposer({
         from_email: userEmail,
       };
 
-      const { data: newEmail, error } = await supabase
-        .from("emails")
-        .insert(newEmailData);
-
-      if (error) {
-        throw error;
+      const response = await fetch("/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEmailData),
+      });
+      if (response.ok) {
+        console.log("Email sent successfully");
+        reset();
+      } else {
+        console.error("Failed to send email");
       }
-
-      console.log("New email inserted:", newEmail);
     } catch (error) {
-      console.error("Error inserting email:", error);
+      console.error("Error sending email:", error);
+    } finally {
+      setIsSending(false);
     }
-  }
+  };
+  //   async function onSubmit(data: EmailFormValues) {
+  //     console.log("submitting", data);
+
+  //     try {
+  //       const newEmailData = {
+  //         to_emails: [data.to_emails],
+  //         subject: data.subject,
+  //         body: data.body,
+  //         cc_emails: [],
+  //         bcc_emails: [],
+  //         attachments: [],
+  //         from_email: userEmail,
+  //       };
+
+  //       const response = await fetch("/api/send-email", {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(newEmailData),
+  //       });
+
+  //       //   resend.emails.send({
+  //       //     from: "onboarding@resend.dev",
+  //       //     to: data.to_emails,
+  //       //     subject: data.subject,
+  //       //     html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
+  //       //   });
+
+  //       if (response.ok) {
+  //         // setIsSending(false);
+  //         console.log("Email sent successfully!");
+  //       } else {
+  //         // setIsSending(false);
+  //         console.error("Failed to send email");
+  //       }
+  //     } catch (error) {
+  //       //   setIsSending(false);
+  //       console.error("Error sending email:", error);
+  //     }
+  //   }
 
   return (
     <DialogContent className="sm:max-w-xl">
