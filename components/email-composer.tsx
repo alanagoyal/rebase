@@ -32,12 +32,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
-export default function EmaiLComposer({
+export default function EmailComposer({
   supabase,
   userEmail,
+  onSend,
 }: {
   supabase: SupabaseClient;
   userEmail: string;
+  onSend: () => void;
 }) {
   const { register, handleSubmit, reset } = useForm();
   const [isSending, setIsSending] = useState(false);
@@ -104,6 +106,7 @@ export default function EmaiLComposer({
       });
       if (response.ok) {
         console.log("Email sent successfully");
+        onSend();
         reset();
       } else {
         console.error("Failed to send email");
@@ -204,10 +207,6 @@ export default function EmaiLComposer({
               <div className="py-1 flex justify-center">
                 <Button
                   type="submit"
-                  onClick={() => {
-                    console.log("clicked send");
-                    // setIsTiptapOpen(false);
-                  }}
                   className="bg-[#9FACE6] text-white font-bold py-2 px-4 rounded w-full"
                 >
                   Send

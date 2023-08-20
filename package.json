@@ -30,7 +30,7 @@
     "class-variance-authority": "^0.6.1",
     "clsx": "^1.2.1",
     "dotenv": "^16.3.1",
-    "lucide-react": "^0.259.0",
+    "lucide-react": "^0.263.1",
     "next": "latest",
     "next-themes": "^0.2.1",
     "postcss": "8.4.24",

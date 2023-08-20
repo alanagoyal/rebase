@@ -28,7 +28,10 @@ const MenuBar = ({ editor }) => {
   return (
     <>
       <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleHeading({ level: 1 }).run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("heading", { level: 1 })
             ? activeButtonStyles
@@ -39,7 +42,10 @@ const MenuBar = ({ editor }) => {
       </button>
 
       <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleHeading({ level: 2 }).run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("heading", { level: 2 })
             ? activeButtonStyles
@@ -49,7 +55,10 @@ const MenuBar = ({ editor }) => {
         h2
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleHeading({ level: 3 }).run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("heading", { level: 3 })
             ? activeButtonStyles
@@ -59,7 +68,10 @@ const MenuBar = ({ editor }) => {
         h3
       </button>
       <button
-        onClick={() => editor.chain().focus().setParagraph().run()}
+        onClick={(e) => {
+          editor.chain().focus().setParagraph().run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("paragraph")
             ? activeButtonStyles
@@ -69,7 +81,10 @@ const MenuBar = ({ editor }) => {
         paragraph
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleBold().run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleBold().run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("bold") ? activeButtonStyles : inactiveButtonStyles
         }`}
@@ -77,7 +92,10 @@ const MenuBar = ({ editor }) => {
         bold
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleItalic().run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleItalic().run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("italic") ? activeButtonStyles : inactiveButtonStyles
         }`}
@@ -85,7 +103,10 @@ const MenuBar = ({ editor }) => {
         italic
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleStrike().run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleStrike().run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("strike") ? activeButtonStyles : inactiveButtonStyles
         }`}
@@ -93,7 +114,10 @@ const MenuBar = ({ editor }) => {
         strike
       </button>
       <button
-        onClick={() => editor.chain().focus().toggleHighlight().run()}
+        onClick={(e) => {
+          editor.chain().focus().toggleHighlight().run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive("highlight")
             ? activeButtonStyles
@@ -103,7 +127,10 @@ const MenuBar = ({ editor }) => {
         highlight
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("left").run()}
+        onClick={(e) => {
+          editor.chain().focus().setTextAlign("left").run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive({ textAlign: "left" })
             ? activeButtonStyles
@@ -113,7 +140,10 @@ const MenuBar = ({ editor }) => {
         left
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("center").run()}
+        onClick={(e) => {
+          editor.chain().focus().setTextAlign("center").run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive({ textAlign: "center" })
             ? activeButtonStyles
@@ -123,7 +153,10 @@ const MenuBar = ({ editor }) => {
         center
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("right").run()}
+        onClick={(e) => {
+          editor.chain().focus().setTextAlign("right").run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive({ textAlign: "right" })
             ? activeButtonStyles
@@ -133,7 +166,10 @@ const MenuBar = ({ editor }) => {
         right
       </button>
       <button
-        onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+        onClick={(e) => {
+          editor.chain().focus().setTextAlign("justify").run();
+          e.preventDefault();
+        }}
         className={`${buttonBaseStyles} ${
           editor.isActive({ textAlign: "justify" })
             ? activeButtonStyles
