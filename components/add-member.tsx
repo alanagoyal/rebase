@@ -25,6 +25,8 @@ import { toast } from "@/components/ui/use-toast";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { useRouter } from "next/navigation";
+import CreatableSelect from "react-select/creatable";
+import { MultiValue } from "react-select";
 
 const memberFormSchema = z.object({
   email: z
@@ -34,13 +36,17 @@ const memberFormSchema = z.object({
     .email(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
+  group_id: z.string().optional(),
 });
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export default function AddMemberForm({ user }: { user: any }) {
-  const [open, setOpen] = React.useState(false);
   const supabase = createClientComponentClient();
+  const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]); // State to store member groups
+  const [selectedGroups, setSelectedGroups] =
+    React.useState<MultiValue<string> | null>(null); // State to track selected group
+  const [open, setOpen] = React.useState(false);
   const router = useRouter();
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
@@ -48,20 +54,93 @@ export default function AddMemberForm({ user }: { user: any }) {
       email: "",
       first_name: "",
       last_name: "",
+      group_id: "",
     },
   });
 
+  React.useEffect(() => {
+    async function fetchMemberGroups() {
+      const { data, error } = await supabase.from("member_groups").select();
+      if (error) {
+        console.error("Error fetching member groups:", error);
+      } else {
+        console.log("member groups", data);
+        setMemberGroups(data);
+      }
+    }
+    fetchMemberGroups();
+  }, [supabase]);
+
+  interface MemberGroup {
+    id: number;
+    name: string;
+  }
+
   async function onSubmit(data: MemberFormValues) {
     try {
-      const updates = {
+      let groupIds = null;
+
+      // Check if the selectedGroups exists in memberGroups
+      const newGroups =
+        selectedGroups
+          ?.filter(
+            (group) =>
+              !memberGroups?.map(({ name }) => name).includes(group.value)
+          )
+          .map(({ value }) => value) || [];
+
+      console.log("newgroups", newGroups);
+
+      // If selectedGroups doesn't exist, create a new group
+      if (!!newGroups.length) {
+        const groupResponse = await supabase
+          .from("member_groups")
+          .insert(newGroups.map((name) => ({ name })))
+          .select();
+        console.log("gr", groupResponse);
+        const { data: createdGroups, error: createGroupError } = groupResponse;
+        console.log("created groups", createdGroups);
+        if (createGroupError) {
+          console.error("Error creating new group:", createGroupError);
+        } else {
+          if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+            groupIds = createdGroups.map(({ id }) => id);
+          }
+        }
+      }
+
+      // Create the new member
+      const memberUpdates = {
         email: data.email,
         first_name: data.first_name,
         last_name: data.last_name,
         created_by: user?.id,
       };
 
-      let { error } = await supabase.from("members").insert(updates);
-      if (error) throw error;
+      // Insert the new member and get the member_id
+      const { data: newMember, error: memberError } = await supabase
+        .from("members")
+        .insert([memberUpdates])
+        .select();
+      if (memberError) {
+        throw memberError;
+      }
+      const memberID = newMember[0].id;
+
+      // Update the joins table to associate the member with the group
+      if (!!groupIds?.length && memberID) {
+        const joinUpdates = groupIds.map((groupId) => ({
+          member_id: memberID,
+          group_id: groupId,
+        }));
+        const { error: joinError } = await supabase
+          .from("member_group_joins")
+          .insert(joinUpdates);
+        if (joinError) {
+          console.error("Error updating member_group_joins:", joinError);
+        }
+      }
+
       toast({
         description: "Your member has been added",
       });
@@ -133,6 +212,33 @@ export default function AddMemberForm({ user }: { user: any }) {
                       </div>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="group_id"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base mx-2">Group</FormLabel>
+                      </div>
+                      <FormControl>
+                        <CreatableSelect
+                          {...field}
+                          isMulti
+                          options={memberGroups.map((group) => ({
+                            //badly typed pkg, ignore squiggly
+                            label: group.name,
+                            value: group.name,
+                          }))} // Convert memberGroups to options
+                          value={selectedGroups}
+                          onChange={(value) => {
+                            console.log("creatable value", value);
+                            setSelectedGroups(value);
+                          }}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
