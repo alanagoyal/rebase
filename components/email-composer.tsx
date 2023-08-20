@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import Tiptap from "@/components/tiptap";
 import {
@@ -26,8 +26,8 @@ import {
   createServerActionClient,
   createServerComponentClient,
 } from "@supabase/auth-helpers-nextjs";
-import { Resend } from "resend";
-import type { NextApiRequest, NextApiResponse } from "next";
+import Select from "react-select";
+import CreatableSelect from "react-select/creatable";
 
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -41,6 +41,35 @@ export default function EmailComposer({
   userEmail: string;
   onSend: () => void;
 }) {
+  useEffect(() => {
+    // Fetch members from your Supabase database
+    async function fetchMembers() {
+      try {
+        const { data: members, error } = await supabase
+          .from("members")
+          .select("id, first_name, last_name, email");
+        if (error) {
+          console.error("Error fetching members:", error);
+          return;
+        }
+
+        // Transform the member data into options for Select component
+        const options = members.map((member) => ({
+          value: member.id,
+          label: `${member.first_name} ${member.last_name} - ${member.email}`,
+        }));
+
+        setSelectedMembers(options);
+      } catch (error) {
+        console.error("Error fetching members:", error);
+      }
+    }
+
+    fetchMembers();
+  }, []); // Run this effect only once on component mount
+
+  const [selectedMembers, setSelectedMembers] = useState([]);
+
   const { register, handleSubmit, reset } = useForm();
   const [isSending, setIsSending] = useState(false);
   const emailFormSchema = z.object({
@@ -180,8 +209,13 @@ export default function EmailComposer({
                     <div className="space-y-0.5">
                       <FormLabel className="text-base mx-2">To</FormLabel>
                     </div>
-                    <FormControl>
-                      <Input {...field} />
+                    <FormControl className="w-full">
+                      <CreatableSelect
+                        {...field}
+                        isMulti
+                        options={selectedMembers}
+                      />
+                      {/* <Input {...field} /> */}
                     </FormControl>
                   </FormItem>
                 )}
