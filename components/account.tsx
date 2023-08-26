@@ -28,7 +28,7 @@ export default function AccountForm({
   name,
   email,
 }: {
-  user: string;
+  user: any;
   name: string;
   email: string;
 }) {
@@ -51,7 +51,7 @@ export default function AccountForm({
       let { error } = await supabase
         .from("profiles")
         .update(updates)
-        .eq("id", user);
+        .eq("id", user.id);
       if (error) throw error;
       toast({
         description: "Your profile has been updated",
