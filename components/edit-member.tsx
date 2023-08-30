@@ -87,7 +87,7 @@ export default function EditMemberForm({ member }: { member: any }) {
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>New Member</DialogTitle>
+            <DialogTitle>Edit Member</DialogTitle>
             <DialogDescription>
               Please enter the first name, last name, and email
             </DialogDescription>

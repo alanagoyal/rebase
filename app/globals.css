@@ -75,6 +75,7 @@
   body {
     @apply bg-background text-foreground;
   }
+
 }
 
 h1 {
@@ -92,3 +93,12 @@ h3 {
 h4 {
   font-size: 16px;
 }
+
+  .banner {
+    background-color: #9FACE6;
+    color: white;
+    padding: 10px;
+    text-align: center;
+  }
+}
+
