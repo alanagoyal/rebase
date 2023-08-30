@@ -68,22 +68,39 @@ export default function EmailComposer({
     fetchMembers();
   }, []); // Run this effect only once on component mount
 
-  const [selectedMembers, setSelectedMembers] = useState([]);
+  const [selectedMembers, setSelectedMembers] = useState<OptionType[]>([]);
+
+  // ...
+
+  interface OptionType {
+    value: any;
+    label: string;
+  }
 
   const { register, handleSubmit, reset } = useForm();
   const [isSending, setIsSending] = useState(false);
   const emailFormSchema = z.object({
-    to_emails: z.string().refine(
-      (value) => {
-        const emails = value.split(",").map((email) => email.trim());
-        return emails.every(
-          (email) => z.string().email().safeParse(email).success
-        );
-      },
-      {
-        message: "Please enter valid email addresses separated by commas.",
-      }
-    ),
+    to_emails: z
+      .array(
+        z.object({
+          value: z.string(),
+          label: z.string(),
+        })
+      )
+      .refine(
+        (value) => {
+          const emails = value.map((item) => item.value.trim());
+          const areAllEmailsValid = emails.every((email) => {
+            const isValid = z.string().email().safeParse(email).success;
+            console.log(`Is email "${email}" valid?`, isValid); // Log the validation result for each email
+            return isValid;
+          });
+          return areAllEmailsValid;
+        },
+        {
+          message: "Please enter valid email addresses.",
+        }
+      ),
     subject: z.string(),
     body: z.string(),
     cc: z
@@ -104,7 +121,7 @@ export default function EmailComposer({
   const form = useForm<EmailFormValues>({
     resolver: zodResolver(emailFormSchema),
     defaultValues: {
-      to_emails: "",
+      to_emails: [],
       subject: "",
       body: "",
       cc: [],
