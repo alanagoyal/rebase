@@ -134,7 +134,7 @@ export default function EmailComposer({
     try {
       setIsSending(true);
       const newEmailData = {
-        to_emails: [data.to_emails],
+        to_emails: data.to_emails.map((email) => email.value),
         subject: data.subject,
         body: data.body,
         cc_emails: [],
