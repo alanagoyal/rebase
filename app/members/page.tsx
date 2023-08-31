@@ -20,6 +20,28 @@ export default async function Members() {
     status,
   } = await supabase.from("members").select("*").eq("created_by", user.id);
 
+  // const {
+  //   data: members,
+  //   error,
+  //   status,
+  // } = await supabase
+  //   .from("members")
+  //   .select(
+  //     `
+  //       id,
+  //       email,
+  //       first_name,
+  //       last_name,
+  //       created_at,
+  //       created_by,
+  //       member_groups:group (
+  //         id,
+  //         name
+  //       )
+  //     `
+  //   )
+  //   .eq("created_by", user.id);
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
