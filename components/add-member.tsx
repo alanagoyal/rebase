@@ -45,7 +45,7 @@ export default function AddMemberForm({ user }: { user: any }) {
   const supabase = createClientComponentClient();
   const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]); // State to store member groups
   const [selectedGroups, setSelectedGroups] =
-    React.useState<MultiValue<string> | null>(null); // State to track selected group
+    React.useState<MultiValue<number> | null>(null); // State to track selected group
   const [open, setOpen] = React.useState(false);
   const router = useRouter();
   const form = useForm<MemberFormValues>({
@@ -80,6 +80,7 @@ export default function AddMemberForm({ user }: { user: any }) {
     try {
       let groupIds = null;
 
+      console.log("memberGroups", memberGroups);
       // Check if the selectedGroups exists in memberGroups
       const newGroups =
         selectedGroups
@@ -91,7 +92,7 @@ export default function AddMemberForm({ user }: { user: any }) {
 
       console.log("newgroups", newGroups);
 
-      groupIds = selectedGroups?.map((group) => group.value);
+      // groupIds = selectedGroups?.map((group) => group.value);
 
       // If selectedGroups doesn't exist, create a new group
       if (!!newGroups.length) {
@@ -129,12 +130,23 @@ export default function AddMemberForm({ user }: { user: any }) {
       }
       const memberID = newMember[0].id;
 
+      console.log("SELECT", selectedGroups);
+
       // Update the joins table to associate the member with the group
-      if (!!groupIds?.length && memberID) {
-        const joinUpdates = groupIds.map((groupId) => ({
-          member_id: memberID,
-          group_id: groupId,
-        }));
+      if (!!selectedGroups?.length && memberID) {
+        const joinUpdates = memberGroups
+          ?.filter((memberGroup) =>
+            selectedGroups
+              .map((selectedGroup) => selectedGroup.value)
+              .includes(memberGroup.name)
+          )
+          .map(({ id }) => id)
+          .concat(groupIds)
+          .map((memberGroupId) => ({
+            member_id: memberID,
+            group_id: memberGroupId,
+          }));
+
         const { error: joinError } = await supabase
           .from("member_group_joins")
           .insert(joinUpdates);
