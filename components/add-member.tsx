@@ -91,6 +91,8 @@ export default function AddMemberForm({ user }: { user: any }) {
 
       console.log("newgroups", newGroups);
 
+      groupIds = selectedGroups?.map((group) => group.value);
+
       // If selectedGroups doesn't exist, create a new group
       if (!!newGroups.length) {
         const groupResponse = await supabase

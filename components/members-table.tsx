@@ -20,11 +20,26 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { toast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import EditMemberForm from "./edit-member";
+import { useEffect, useState } from "react";
 
 type Member = Database["public"]["Tables"]["members"]["Row"];
+type GroupMappings = Record<string, string[]>;
+type GroupName = {
+  id: number;
+  name: string;
+};
 
-export function MembersTable({ members }: { members: Member[] }) {
+export function MembersTable({
+  members,
+  groupMappings,
+  groupNamesData,
+}: {
+  members: Member[];
+  groupMappings: GroupMappings;
+  groupNamesData: GroupName;
+}) {
   const supabase = createClientComponentClient();
+  const [groupInfo, setGroupInfo] = useState({});
 
   const router = useRouter();
 
@@ -41,6 +56,7 @@ export function MembersTable({ members }: { members: Member[] }) {
     }
   }
 
+  console.log("members", members);
   return (
     <Table>
       <TableHeader>
@@ -48,6 +64,7 @@ export function MembersTable({ members }: { members: Member[] }) {
           <TableHead className="w-[100px]">Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Created Time</TableHead>
+          <TableHead>Group</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -60,6 +77,21 @@ export function MembersTable({ members }: { members: Member[] }) {
             <TableCell>
               {new Date(member.created_at).toLocaleString("en-US")}
             </TableCell>
+            {groupMappings[member.id]
+              ? groupMappings[member.id]
+                  .map((groupId) => {
+                    const matchingGroup = groupNamesData.find(
+                      (group) => group.id === groupId
+                    ) as GroupName;
+                    if (matchingGroup) {
+                      return matchingGroup.name;
+                    }
+                    return null;
+                  })
+                  .join(", ")
+              : "No Groups"}
+            {/* This will log the member object */}
+            {/* <TableCell>{member}</TableCell> */}
             <TableCell>
               <TooltipProvider>
                 <Tooltip>
