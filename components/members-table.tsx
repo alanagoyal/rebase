@@ -77,21 +77,23 @@ export function MembersTable({
             <TableCell>
               {new Date(member.created_at).toLocaleString("en-US")}
             </TableCell>
-            {groupMappings[member.id]
-              ? groupMappings[member.id]
-                  .map((groupId) => {
-                    const matchingGroup = groupNamesData.find(
-                      (group) => group.id === groupId
-                    ) as GroupName;
-                    if (matchingGroup) {
-                      return matchingGroup.name;
-                    }
-                    return null;
-                  })
-                  .join(", ")
-              : "No Groups"}
-            {/* This will log the member object */}
-            {/* <TableCell>{member}</TableCell> */}
+
+            <TableCell>
+              {groupMappings[member.id]
+                ? groupMappings[member.id]
+                    .map((groupId) => {
+                      const matchingGroup = groupNamesData.find(
+                        (group) => group.id === groupId
+                      ) as GroupName;
+                      if (matchingGroup) {
+                        return matchingGroup.name;
+                      }
+                      return null;
+                    })
+                    .join(", ")
+                : "None"}
+            </TableCell>
+
             <TableCell>
               <TooltipProvider>
                 <Tooltip>
