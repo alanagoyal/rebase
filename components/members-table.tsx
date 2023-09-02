@@ -39,7 +39,9 @@ export function MembersTable({
   groupNamesData: GroupName;
 }) {
   const supabase = createClientComponentClient();
-  const [groupInfo, setGroupInfo] = useState({});
+  const [groupMemberships, setGroupMemberships] = useState<
+    Record<string, string>
+  >({});
 
   const router = useRouter();
 
@@ -55,6 +57,32 @@ export function MembersTable({
       console.log(error);
     }
   }
+
+  useEffect(() => {
+    const groupMemberships: Record<string, string> = {};
+    members.forEach((member) => {
+      if (groupMappings[member.id]) {
+        const formattedMembership = groupMappings[member.id]
+          .map((groupId) => {
+            const matchingGroup = groupNamesData.find(
+              (group) => group.id === groupId
+            ) as GroupName;
+            return matchingGroup ? matchingGroup.name : null;
+          })
+          .filter(Boolean)
+          .join(", ");
+        groupMemberships[member.id] = formattedMembership || "None";
+      } else {
+        groupMemberships[member.id] = "None";
+      }
+    });
+
+    setGroupMemberships(groupMemberships);
+  }, [members, groupMappings, groupNamesData]);
+
+  console.log("groupMappings", groupMappings);
+  console.log("groupNamesData", groupNamesData);
+  console.log("groupMappingsForMembers", groupMappings[members[0].id]);
 
   console.log("members", members);
   return (
@@ -77,28 +105,15 @@ export function MembersTable({
             <TableCell>
               {new Date(member.created_at).toLocaleString("en-US")}
             </TableCell>
-
-            <TableCell>
-              {groupMappings[member.id]
-                ? groupMappings[member.id]
-                    .map((groupId) => {
-                      const matchingGroup = groupNamesData.find(
-                        (group) => group.id === groupId
-                      ) as GroupName;
-                      if (matchingGroup) {
-                        return matchingGroup.name;
-                      }
-                      return null;
-                    })
-                    .join(", ")
-                : "None"}
-            </TableCell>
-
+            <TableCell>{groupMemberships[member.id]}</TableCell>
             <TableCell>
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <EditMemberForm member={member} />
+                    <EditMemberForm
+                      existingGroups={groupMemberships[member.id]}
+                      member={member}
+                    />
                   </TooltipTrigger>
                   <TooltipContent>Edit Member</TooltipContent>
                 </Tooltip>
