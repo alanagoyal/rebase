@@ -82,7 +82,6 @@ export function MembersTable({
 
   console.log("groupMappings", groupMappings);
   console.log("groupNamesData", groupNamesData);
-  console.log("groupMappingsForMembers", groupMappings[members[0].id]);
 
   console.log("members", members);
   return (
