@@ -36,7 +36,6 @@ const memberFormSchema = z.object({
     .email(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
-  group_id: z.string().optional(),
 });
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
@@ -54,7 +53,6 @@ export default function AddMemberForm({ user }: { user: any }) {
       email: "",
       first_name: "",
       last_name: "",
-      group_id: "",
     },
   });
 

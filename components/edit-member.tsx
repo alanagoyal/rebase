@@ -26,6 +26,9 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { Edit } from "lucide-react";
+import CreatableSelect from "react-select/creatable";
+import { useEffect } from "react";
+import { MultiValue } from "react-select";
 
 const memberFormSchema = z.object({
   email: z
@@ -39,7 +42,21 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
-export default function EditMemberForm({ member }: { member: any }) {
+interface MemberGroup {
+  id: number;
+  name: string;
+}
+
+export default function EditMemberForm({
+  member,
+  existingGroups,
+}: {
+  member: any;
+  existingGroups: any;
+}) {
+  //track all the groups
+  const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]);
+
   const [open, setOpen] = React.useState(false);
   const supabase = createClientComponentClient();
   const router = useRouter();
@@ -52,10 +69,128 @@ export default function EditMemberForm({ member }: { member: any }) {
     },
   });
 
+  // TODO: Can probably remove this later and do the fetching once
+  React.useEffect(() => {
+    async function fetchMemberGroups() {
+      const { data, error } = await supabase.from("member_groups").select();
+      if (error) {
+        console.error("Error fetching member groups:", error);
+      } else {
+        console.log("member groups", data);
+        setMemberGroups(data);
+      }
+    }
+    fetchMemberGroups();
+  }, [supabase]);
+
+  const [selectedGroups, setSelectedGroups] =
+    React.useState<MultiValue<number> | null>(null); // State to track selected group
+
+  React.useEffect(() => {
+    // Format existingGroups into an array of objects with label and value properties
+    const formattedGroups = existingGroups
+      ? existingGroups.split(",").map((groupName) => ({
+          label: groupName,
+          value: groupName,
+        }))
+      : null;
+
+    // Check if any of the group names is "none"
+    if (
+      formattedGroups &&
+      formattedGroups.some((group) => group.value === "None")
+    ) {
+      setSelectedGroups(null); // Set selectedGroups to null
+    } else {
+      setSelectedGroups(formattedGroups);
+    }
+  }, [existingGroups]);
+
+  console.log("Select", selectedGroups);
+  console.log("EIT", existingGroups);
+  const existingGroupIds = existingGroups ? existingGroups.split(",") : [];
+
+  console.log("existingIDs", existingGroupIds);
   async function onSubmit(data: MemberFormValues) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+
+    let groupIds = null;
+    // Save new groups - if the member group doesn't holld any of the selected groups
+    const newGroups =
+      selectedGroups
+        ?.filter(
+          (group) =>
+            !memberGroups?.map(({ name }) => name).includes(group.value)
+        )
+        .map(({ value }) => value) || [];
+
+    //Creating a new group if there are elements in the newgroup array
+    if (!!newGroups.length) {
+      const groupResponse = await supabase
+        .from("member_groups")
+        .insert(newGroups.map((name) => ({ name })))
+        .select();
+      console.log("gr", groupResponse);
+      const { data: createdGroups, error: createGroupError } = groupResponse;
+      console.log("created groups", createdGroups);
+      if (createGroupError) {
+        console.error("Error creating new group:", createGroupError);
+      } else {
+        if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+          groupIds = createdGroups.map(({ id }) => id);
+        }
+      }
+    }
+
+    // If selectedGroups doesn't exist, create a new group
+    // if (!!newGroups.length) {
+    //   const groupResponse = await supabase
+    //     .from("member_groups")
+    //     .insert(newGroups.map((name) => ({ name })))
+    //     .select();
+    //   console.log("gr", groupResponse);
+    //   const { data: createdGroups, error: createGroupError } = groupResponse;
+    //   console.log("created groups", createdGroups);
+    //   if (createGroupError) {
+    //     console.error("Error creating new group:", createGroupError);
+    //   } else {
+    //     if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+    //       groupIds = createdGroups.map(({ id }) => id);
+    //     }
+    //   }
+    // }
+
+    //Groups to delete:
+    //check if
+
+    // const groupsToDelete = filteredExistingGroupIds.filter(
+    //   (existingGroupId) =>
+    //     !joinUpdates.some((update) => update.group_id === existingGroupId)
+    // );
+    // Update the joins table to associate the member with the group
+    // if (!!selectedGroups?.length && member.id) {
+    //   const joinUpdates = memberGroups
+    //     ?.filter((memberGroup) =>
+    //       selectedGroups
+    //         .map((selectedGroup) => selectedGroup.value)
+    //         .includes(memberGroup.name)
+    //     )
+    //     .map(({ id }) => id)
+    //     .concat(groupIds)
+    //     .map((memberGroupId) => ({
+    //       member_id: memberID,
+    //       group_id: memberGroupId,
+    //     }));
+
+    //   const { error: joinError } = await supabase
+    //     .from("member_group_joins")
+    //     .insert(joinUpdates);
+    //   if (joinError) {
+    //     console.error("Error updating member_group_joins:", joinError);
+    //   }
+    // }
 
     try {
       const updates = {
@@ -65,6 +200,33 @@ export default function EditMemberForm({ member }: { member: any }) {
         created_by: user?.id,
       };
 
+      const selectedGroupIds = selectedGroups
+        ? selectedGroups.map((group) => group.value)
+        : [];
+
+      console.log("SId", selectedGroupIds);
+
+      if (!!selectedGroups?.length && member.id) {
+        const joinUpdates = memberGroups
+          ?.filter((memberGroup) =>
+            selectedGroups
+              .map((selectedGroup) => selectedGroup.value)
+              .includes(memberGroup.name)
+          )
+          .map(({ id }) => id)
+          .concat(groupIds)
+          .map((memberGroupId) => ({
+            member_id: member.id,
+            group_id: memberGroupId,
+          }));
+
+        const { error: joinError } = await supabase
+          .from("member_group_joins")
+          .insert(joinUpdates);
+        if (joinError) {
+          console.error("Error updating member_group_joins:", joinError);
+        }
+      }
       let { error } = await supabase
         .from("members")
         .update(updates)
@@ -78,6 +240,19 @@ export default function EditMemberForm({ member }: { member: any }) {
       console.log(error);
     }
   }
+
+  // React.useEffect(() => {
+  //   async function fetchMemberGroups() {
+  //     const { data, error } = await supabase.from("member_groups").select();
+  //     if (error) {
+  //       console.error("Error fetching member groups:", error);
+  //     } else {
+  //       console.log("member groups", data);
+  //       setMemberGroups(data);
+  //     }
+  //   }
+  //   fetchMemberGroups();
+  // }, [supabase]);
 
   return (
     <div>
@@ -141,6 +316,32 @@ export default function EditMemberForm({ member }: { member: any }) {
                       </div>
                       <FormControl>
                         <Input {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="group_id"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base mx-2">Group</FormLabel>
+                      </div>
+                      <FormControl>
+                        <CreatableSelect
+                          {...field}
+                          isMulti
+                          options={memberGroups.map((group) => ({
+                            label: group.name,
+                            value: group.name,
+                          }))}
+                          value={selectedGroups}
+                          onChange={(value) => {
+                            console.log("creatable value", value);
+                            setSelectedGroups(value);
+                          }}
+                        />
                       </FormControl>
                     </FormItem>
                   )}
