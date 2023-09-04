@@ -76,8 +76,19 @@ export default function AddMemberForm({ user }: { user: any }) {
 
   async function onSubmit(data: MemberFormValues) {
     try {
-      let groupIds = null;
+      // Get the IDs of the selected groups that already exist in memberGroups
+      const existingGroupIds = selectedGroups
+        ?.filter((group) =>
+          memberGroups?.map(({ name }) => name).includes(group.value)
+        )
+        .map(
+          (group) => memberGroups.find(({ name }) => name === group.value)?.id
+        );
 
+      // let groupIds = [];
+      // groupIds = groupIds.concat(existingGroupIds);
+
+      // Add the IDs of the existing groups to groupIds
       console.log("memberGroups", memberGroups);
       // Check if the selectedGroups exists in memberGroups
       const newGroups =
@@ -93,6 +104,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       // groupIds = selectedGroups?.map((group) => group.value);
 
       // If selectedGroups doesn't exist, create a new group
+      let groupIds = [];
       if (!!newGroups.length) {
         const groupResponse = await supabase
           .from("member_groups")
@@ -153,6 +165,7 @@ export default function AddMemberForm({ user }: { user: any }) {
         }
       }
       form.reset();
+      setSelectedGroups(null);
 
       toast({
         description: "Your member has been added",
