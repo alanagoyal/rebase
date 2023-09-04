@@ -190,7 +190,6 @@ export default function EmailComposer({
       .optional(),
   });
 
-  console.log("GRP", selectedMemberGroups);
   type EmailFormValues = z.infer<typeof emailFormSchema>;
 
   const form = useForm<EmailFormValues>({
@@ -205,21 +204,20 @@ export default function EmailComposer({
     },
   });
 
-  selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
-
-  // console.log("SLECTEDMEMBER", selectedMembers);
-
   const onSubmit = async (data: EmailFormValues) => {
     try {
       setIsSending(true);
 
       const toEmails = data.to_emails.map((email) => email.value);
+      let mergedEmails = toEmails;
+
       if (memberEmailsArray.length > 0) {
-        toEmails.concat(memberEmailsArray);
+        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])];
       }
+      console.log("MERGE", mergedEmails);
       const newEmailData = {
-        to_emails: toEmails,
-        subject: data.subject ? data.subject : "",
+        to_emails: mergedEmails,
+        subject: data.subject ? data.subject : "empty subject",
         body: data.body ? data.body : "<p></p>",
         cc_emails: [],
         bcc_emails: [],
