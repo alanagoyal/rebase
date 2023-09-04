@@ -291,7 +291,7 @@ export default function EmailComposer({
                       <FormLabel className="text-base mx-2">To</FormLabel>
                     </div>
                     <FormControl className="w-full">
-                      <CreatableSelect
+                      <Select
                         {...field}
                         isMulti
                         options={selectedMemberGroups}
