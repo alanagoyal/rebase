@@ -117,7 +117,7 @@ export default function EditMemberForm({
     } = await supabase.auth.getUser();
 
     let groupIds = null;
-    // Check if the selectedGroups exists in memberGroups
+    // Save new groups - if the member group doesn't holld any of the selected groups
     const newGroups =
       selectedGroups
         ?.filter(
@@ -126,7 +126,23 @@ export default function EditMemberForm({
         )
         .map(({ value }) => value) || [];
 
-    console.log("newgroups", newGroups);
+    //Creating a new group if there are elements in the newgroup array
+    if (!!newGroups.length) {
+      const groupResponse = await supabase
+        .from("member_groups")
+        .insert(newGroups.map((name) => ({ name })))
+        .select();
+      console.log("gr", groupResponse);
+      const { data: createdGroups, error: createGroupError } = groupResponse;
+      console.log("created groups", createdGroups);
+      if (createGroupError) {
+        console.error("Error creating new group:", createGroupError);
+      } else {
+        if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+          groupIds = createdGroups.map(({ id }) => id);
+        }
+      }
+    }
 
     // If selectedGroups doesn't exist, create a new group
     // if (!!newGroups.length) {
@@ -184,6 +200,33 @@ export default function EditMemberForm({
         created_by: user?.id,
       };
 
+      const selectedGroupIds = selectedGroups
+        ? selectedGroups.map((group) => group.value)
+        : [];
+
+      console.log("SId", selectedGroupIds);
+
+      if (!!selectedGroups?.length && member.id) {
+        const joinUpdates = memberGroups
+          ?.filter((memberGroup) =>
+            selectedGroups
+              .map((selectedGroup) => selectedGroup.value)
+              .includes(memberGroup.name)
+          )
+          .map(({ id }) => id)
+          .concat(groupIds)
+          .map((memberGroupId) => ({
+            member_id: member.id,
+            group_id: memberGroupId,
+          }));
+
+        const { error: joinError } = await supabase
+          .from("member_group_joins")
+          .insert(joinUpdates);
+        if (joinError) {
+          console.error("Error updating member_group_joins:", joinError);
+        }
+      }
       let { error } = await supabase
         .from("members")
         .update(updates)
