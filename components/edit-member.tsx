@@ -116,8 +116,28 @@ export default function EditMemberForm({
       data: { user },
     } = await supabase.auth.getUser();
 
-    let groupIds = null;
-    // Save new groups - if the member group doesn't holld any of the selected groups
+    let groupIds = [];
+
+    // Delete all existing associations for the member
+    const { error: deleteError } = await supabase
+    .from("member_group_joins")
+    .delete()
+    .eq("member_id", member.id);
+    if (deleteError) {
+    console.error("Error deleting existing associations:", deleteError);
+    }
+
+    // Get the IDs of the selected groups that already exist in memberGroups
+    // Get the IDs of the selected groups that already exist in memberGroups
+    const existingGroupIds = selectedGroups
+      ?.filter((group) =>
+        memberGroups?.map(({ name }) => name).includes(group.value)
+      )
+      .map((group) => memberGroups.find(({ name }) => name === group.value)?.id);
+
+    // Add the IDs of the existing groups to groupIds
+   
+    // Save new groups - if the member group doesn't hold any of the selected groups
     const newGroups =
       selectedGroups
         ?.filter(
@@ -142,55 +162,7 @@ export default function EditMemberForm({
           groupIds = createdGroups.map(({ id }) => id);
         }
       }
-    }
-
-    // If selectedGroups doesn't exist, create a new group
-    // if (!!newGroups.length) {
-    //   const groupResponse = await supabase
-    //     .from("member_groups")
-    //     .insert(newGroups.map((name) => ({ name })))
-    //     .select();
-    //   console.log("gr", groupResponse);
-    //   const { data: createdGroups, error: createGroupError } = groupResponse;
-    //   console.log("created groups", createdGroups);
-    //   if (createGroupError) {
-    //     console.error("Error creating new group:", createGroupError);
-    //   } else {
-    //     if (Array.isArray(createdGroups) && createdGroups.length > 0) {
-    //       groupIds = createdGroups.map(({ id }) => id);
-    //     }
-    //   }
-    // }
-
-    //Groups to delete:
-    //check if
-
-    // const groupsToDelete = filteredExistingGroupIds.filter(
-    //   (existingGroupId) =>
-    //     !joinUpdates.some((update) => update.group_id === existingGroupId)
-    // );
-    // Update the joins table to associate the member with the group
-    // if (!!selectedGroups?.length && member.id) {
-    //   const joinUpdates = memberGroups
-    //     ?.filter((memberGroup) =>
-    //       selectedGroups
-    //         .map((selectedGroup) => selectedGroup.value)
-    //         .includes(memberGroup.name)
-    //     )
-    //     .map(({ id }) => id)
-    //     .concat(groupIds)
-    //     .map((memberGroupId) => ({
-    //       member_id: memberID,
-    //       group_id: memberGroupId,
-    //     }));
-
-    //   const { error: joinError } = await supabase
-    //     .from("member_group_joins")
-    //     .insert(joinUpdates);
-    //   if (joinError) {
-    //     console.error("Error updating member_group_joins:", joinError);
-    //   }
-    // }
+    } 
 
     try {
       const updates = {
@@ -207,18 +179,15 @@ export default function EditMemberForm({
       console.log("SId", selectedGroupIds);
 
       if (!!selectedGroups?.length && member.id) {
-        const joinUpdates = memberGroups
-          ?.filter((memberGroup) =>
-            selectedGroups
-              .map((selectedGroup) => selectedGroup.value)
-              .includes(memberGroup.name)
-          )
-          .map(({ id }) => id)
-          .concat(groupIds)
-          .map((memberGroupId) => ({
-            member_id: member.id,
-            group_id: memberGroupId,
-          }));
+       // Insert new associations
+        const joinUpdates = selectedGroups
+        ?.map((group) => memberGroups.find((g) => g.name === group.value)?.id)
+        .concat(groupIds)
+        .filter((id) => id !== undefined)
+        .map((memberGroupId) => ({
+          member_id: member.id,
+          group_id: memberGroupId,
+        }));
 
         const { error: joinError } = await supabase
           .from("member_group_joins")
