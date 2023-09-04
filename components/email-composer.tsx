@@ -69,9 +69,70 @@ export default function EmailComposer({
     fetchMembers();
   }, []); // Run this effect only once on component mount
 
-  const [selectedMembers, setSelectedMembers] = useState<OptionType[]>([]);
+  // interface MemberGroup {
+  //   id: number;
+  //   label: string;
+  // }
 
-  // ...
+  const [selectedMembers, setSelectedMembers] = useState<OptionType[]>([]);
+  const [selectedMemberGroups, setSelectedMemberGroups] = useState<
+    OptionType[]
+  >([]);
+
+  useEffect(() => {
+    async function fetchMemberGroups() {
+      const { data: member_groups, error } = await supabase
+        .from("member_groups")
+        .select();
+
+      // Transform the memebrGroup data for the selected component
+      const options = member_groups.map((member_group) => ({
+        value: member_group.id,
+        label: member_group.name,
+      }));
+
+      if (error) {
+        console.error("Error fetching member groups:", error);
+      } else {
+        console.log("member groups", options);
+        setSelectedMemberGroups(options);
+      }
+    }
+    fetchMemberGroups();
+  }, [supabase]);
+
+  //Fetch member ids for the selected groups
+  useEffect(() => {
+    async function fetchMemberGroupEmails() {
+      // Extract group_ids from the fetched member_groups
+      const groupIds = selectedMemberGroups.map(
+        (selectedMemberGroup) => selectedMemberGroup.value
+      );
+
+      // Fetch member_group_joins records with these group_ids
+      const { data: memberGroupJoins, error: joinError } = await supabase
+        .from("member_group_joins")
+        .select("member_id")
+        .in("group_id", groupIds);
+
+      console.log("memebrGroupJoins", memberGroupJoins);
+      const memberGroupArray = Object.values(memberGroupJoins);
+      const memberIds = memberGroupArray.map((join) => join.member_id);
+      console.log("memberIds", memberIds);
+
+      // Fetch member emails from the members table based on the extracted member_ids
+      const { data: memberEmails, error: memberEmailError } = await supabase
+        .from("members")
+        .select("email")
+        .in("id", memberIds);
+      console.log("memberEmails", memberEmails);
+      const memberEmailsArray = memberEmails.map((join) => join.email);
+
+      // const memberEmailsArray = Object.values(memberEmails);
+      console.log("ARRAY", memberEmailsArray);
+    }
+    fetchMemberGroupEmails();
+  }, [selectedMemberGroups]);
 
   interface OptionType {
     value: any;
@@ -194,6 +255,26 @@ export default function EmailComposer({
                         {...field}
                         isMulti
                         options={selectedMembers}
+                      />
+                      {/* <Input {...field} /> */}
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+              {/* TODO: putting in separate field for now, will combine later */}
+              <FormField
+                control={form.control}
+                name="group_emails"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base mx-2">To</FormLabel>
+                    </div>
+                    <FormControl className="w-full">
+                      <CreatableSelect
+                        {...field}
+                        isMulti
+                        options={selectedMemberGroups}
                       />
                       {/* <Input {...field} /> */}
                     </FormControl>
