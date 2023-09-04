@@ -78,6 +78,8 @@ export default function EmailComposer({
     OptionType[]
   >([]);
 
+  const [memberEmailsArray, setMemberEmailsArray] = useState([]);
+
   useEffect(() => {
     async function fetchMemberGroups() {
       const { data: member_groups, error } = await supabase
@@ -125,12 +127,14 @@ export default function EmailComposer({
         .select("email")
         .in("id", memberIds);
       console.log("memberEmails", memberEmails);
-      const memberEmailsArray = memberEmails.map((join) => join.email);
-
+      const array = memberEmails.map((join) => join.email);
+      setMemberEmailsArray(array);
       // const memberEmailsArray = Object.values(memberEmails);
       console.log("ARRAY", memberEmailsArray);
     }
-    fetchMemberGroupEmails();
+    if (selectedMemberGroups.length > 0) {
+      fetchMemberGroupEmails();
+    }
   }, [selectedMemberGroups]);
 
   interface OptionType {
@@ -175,8 +179,17 @@ export default function EmailComposer({
       )
       .optional(),
     attachments: z.array(z.string()).optional(),
+    group_emails: z
+      .array(
+        z.object({
+          value: z.number(),
+          label: z.string(),
+        })
+      )
+      .optional(),
   });
 
+  console.log("GRP", selectedMemberGroups);
   type EmailFormValues = z.infer<typeof emailFormSchema>;
 
   const form = useForm<EmailFormValues>({
@@ -191,13 +204,22 @@ export default function EmailComposer({
     },
   });
 
+  selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
+
+  // console.log("SLECTEDMEMBER", selectedMembers);
+
   const onSubmit = async (data: EmailFormValues) => {
     try {
       setIsSending(true);
+
+      const toEmails = data.to_emails.map((email) => email.value);
+      if (memberEmailsArray.length > 0) {
+        toEmails.concat(memberEmailsArray);
+      }
       const newEmailData = {
-        to_emails: data.to_emails.map((email) => email.value),
-        subject: data.subject,
-        body: data.body,
+        to_emails: toEmails,
+        subject: data.subject ? data.subject : "",
+        body: data.body ? data.body : "<p></p>",
         cc_emails: [],
         bcc_emails: [],
         attachments: [],
@@ -219,7 +241,7 @@ export default function EmailComposer({
       if (response.ok) {
         console.log("Email sent successfully");
         onSend();
-        reset();
+        form.reset();
       } else {
         console.error("Failed to send email");
       }
