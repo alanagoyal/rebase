@@ -190,6 +190,7 @@ export default function EmailComposer({
       .optional(),
   });
 
+  console.log("GRP", selectedMemberGroups);
   type EmailFormValues = z.infer<typeof emailFormSchema>;
 
   const form = useForm<EmailFormValues>({
@@ -203,6 +204,10 @@ export default function EmailComposer({
       attachments: [],
     },
   });
+
+  selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
+
+  // console.log("SLECTEDMEMBER", selectedMembers);
 
   const onSubmit = async (data: EmailFormValues) => {
     try {
