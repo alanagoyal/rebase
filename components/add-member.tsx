@@ -154,6 +154,7 @@ export default function AddMemberForm({ user }: { user: any }) {
           console.error("Error updating member_group_joins:", joinError);
         }
       }
+      form.reset();
 
       toast({
         description: "Your member has been added",
