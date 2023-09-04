@@ -28,6 +28,7 @@ import {
 } from "@supabase/auth-helpers-nextjs";
 import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
+import { toast } from "@/components/ui/use-toast";
 
 import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
@@ -55,7 +56,7 @@ export default function EmailComposer({
 
         // Transform the member data into options for Select component
         const options = members.map((member) => ({
-          value: member.id,
+          value: member.email,
           label: `${member.first_name} ${member.last_name} - ${member.email}`,
         }));
 
@@ -167,48 +168,10 @@ export default function EmailComposer({
     } finally {
       setIsSending(false);
     }
+    toast({
+      description: "Your email has been sent successfully",
+    });
   };
-  //   async function onSubmit(data: EmailFormValues) {
-  //     console.log("submitting", data);
-
-  //     try {
-  //       const newEmailData = {
-  //         to_emails: [data.to_emails],
-  //         subject: data.subject,
-  //         body: data.body,
-  //         cc_emails: [],
-  //         bcc_emails: [],
-  //         attachments: [],
-  //         from_email: userEmail,
-  //       };
-
-  //       const response = await fetch("/api/send-email", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(newEmailData),
-  //       });
-
-  //       //   resend.emails.send({
-  //       //     from: "onboarding@resend.dev",
-  //       //     to: data.to_emails,
-  //       //     subject: data.subject,
-  //       //     html: "<p>Congrats on sending your <strong>first email</strong>!</p>",
-  //       //   });
-
-  //       if (response.ok) {
-  //         // setIsSending(false);
-  //         console.log("Email sent successfully!");
-  //       } else {
-  //         // setIsSending(false);
-  //         console.error("Failed to send email");
-  //       }
-  //     } catch (error) {
-  //       //   setIsSending(false);
-  //       console.error("Error sending email:", error);
-  //     }
-  //   }
 
   return (
     <DialogContent className="sm:max-w-xl">
@@ -271,10 +234,6 @@ export default function EmailComposer({
             </form>
           </Form>
         </div>
-
-        {/* <DialogDescription>
-        Please enter the first name, last name, and email
-      </DialogDescription> */}
       </DialogHeader>
     </DialogContent>
   );
