@@ -16,5 +16,5 @@ export async function POST(req: Request, res: NextResponse) {
       console.log(payload)
     const emailData = await resend.emails.send(payload);
 
-    return NextResponse.json({ success: true, result: emailData, payload: payload })
+    return NextResponse.json({ success: emailData?.statusCode < 300, result: emailData, payload: payload }, { status: emailData?.statusCode, statusText: emailData.message })
 }
