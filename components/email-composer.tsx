@@ -149,15 +149,19 @@ export default function EmailComposer({
     to_emails: z
       .array(
         z.object({
-          value: z.string(),
+          value: z.union([z.string(), z.number()]),
           label: z.string(),
         })
       )
       .refine(
         (value) => {
-          const emails = value.map((item) => item.value.trim());
+          console.log("mathuster is stinky", value);
+          const emails = value.map((item) => item.value.toString().trim());
           const areAllEmailsValid = emails.every((email) => {
-            const isValid = z.string().email().safeParse(email).success;
+            ``;
+            const isValid =
+              !isNaN(parseInt(email)) ||
+              z.string().email().safeParse(email).success;
             console.log(`Is email "${email}" valid?`, isValid); // Log the validation result for each email
             return isValid;
           });
@@ -205,11 +209,12 @@ export default function EmailComposer({
     },
   });
 
-  selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
+  // selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
 
-  // console.log("SLECTEDMEMBER", selectedMembers);
+  console.log("SLECTEDMEMBER", selectedMembers);
 
   const onSubmit = async (data: EmailFormValues) => {
+    console.log("entered the onsubnit with", data);
     try {
       setIsSending(true);
 
@@ -217,7 +222,10 @@ export default function EmailComposer({
       let mergedEmails = toEmails;
 
       if (memberEmailsArray.length > 0) {
-        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])];
+        console.log(memberEmailsArray, "memberEmailsArray");
+        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])].filter(
+          (v) => isNaN(v)
+        );
       }
       console.log("MERGE", mergedEmails);
       const newEmailData = {
@@ -269,7 +277,6 @@ export default function EmailComposer({
         <div className="grid gap-4 py-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {" "}
               <FormField
                 control={form.control}
                 name="to_emails"
@@ -279,10 +286,10 @@ export default function EmailComposer({
                       <FormLabel className="text-base mx-2">To</FormLabel>
                     </div>
                     <FormControl className="w-full">
-                      <CreatableSelect
+                      <Select
                         {...field}
                         isMulti
-                        options={selectedMembers}
+                        options={[...selectedMembers, ...selectedMemberGroups]}
                       />
                       {/* <Input {...field} /> */}
                     </FormControl>
@@ -290,25 +297,6 @@ export default function EmailComposer({
                 )}
               />
               {/* TODO: putting in separate field for now, will combine later */}
-              <FormField
-                control={form.control}
-                name="group_emails"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base mx-2">To</FormLabel>
-                    </div>
-                    <FormControl className="w-full">
-                      <Select
-                        {...field}
-                        isMulti
-                        options={selectedMemberGroups}
-                      />
-                      {/* <Input {...field} /> */}
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="subject"
