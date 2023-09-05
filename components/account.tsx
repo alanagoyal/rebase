@@ -28,7 +28,7 @@ export default function AccountForm({
   name,
   email,
 }: {
-  user: any;
+  user: { id: string };
   name: string;
   email: string;
 }) {
@@ -42,23 +42,30 @@ export default function AccountForm({
   });
 
   async function onSubmit(data: AccountFormValues) {
-    try {
-      const updates = {
-        email: email,
-        full_name: data.name,
-      };
+      try {
+        const updates = {
+          email: data.email,
+          full_name: data.name,
+        };
 
       let { error } = await supabase
         .from("profiles")
         .update(updates)
         .eq("id", user.id);
-      if (error) throw error;
-      toast({
-        description: "Your profile has been updated",
-      });
-    } catch (error) {
-      console.log(error);
-    }
+      if (error) {
+              toast({
+                description: "An error occurred while updating your profile",
+              });
+            } else {
+              toast({
+                description: "Your profile has been updated",
+              });
+            }
+          } catch (error) {
+            toast({
+              description: "An error occurred while updating your profile",
+            });
+          }
   }
 
   return (
