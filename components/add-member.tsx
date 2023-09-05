@@ -27,6 +27,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import CreatableSelect from "react-select/creatable";
 import { MultiValue } from "react-select";
+import { User } from "lucide-react";
 
 const memberFormSchema = z.object({
   email: z
@@ -180,7 +181,11 @@ export default function AddMemberForm({ user }: { user: any }) {
     <div>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
-          <Button>Add Member</Button>
+          <Button>
+            {" "}
+            <User className="w-6 h-6 p-1" />
+            New Member
+          </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
