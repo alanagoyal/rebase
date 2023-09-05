@@ -1,5 +1,6 @@
 import AddMemberForm from "@/components/add-member";
 import { MembersTable } from "@/components/members-table";
+import NewMessage from "@/components/new-message";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -68,6 +69,7 @@ export default async function Members() {
         <h2 className="text-3xl font-bold tracking-tight">Members</h2>
         <div className="flex items-center space-x-2">
           <AddMemberForm user={user} />
+          <NewMessage />
         </div>
       </div>
       <div className="flex">
