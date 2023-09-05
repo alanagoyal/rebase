@@ -24,12 +24,20 @@ export default function Index() {
           <p>
             Built with <span className="text-red-500">❤️</span> by{" "}
             <a
-              href={siteConfig.links.twitter}
+              href="https://twitter.com/alanaagoyal"
               target="_blank"
               rel="noopener noreferrer"
             >
               {siteConfig.authorName}
             </a>{" "}
+            and{" "}
+            <a
+              href="https://twitter.com/mathurahravi"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Mathu
+            </a>
           </p>
         </div>
       </footer>
