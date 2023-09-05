@@ -45,7 +45,7 @@ export default async function Members() {
     id: string;
     name: string;
   };
-  let groupNamesData: GroupName[] = [];
+  let groupNamesData: any = [];
 
   if (groupMappings) {
     const groupIds: string[] = groupMappings.map((mapping) => mapping.group_id);
