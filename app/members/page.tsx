@@ -1,8 +1,15 @@
+import React, { useState } from "react";
 import AddMemberForm from "@/components/add-member";
 import { MembersTable } from "@/components/members-table";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import EmailComposer from "@/components/email-composer";
 
 export default async function Members() {
   const supabase = createServerComponentClient({ cookies });
@@ -62,12 +69,32 @@ export default async function Members() {
 
   console.log("groupmappings", groupNamesData, groupMappings);
 
+  const [isTiptapOpen, setIsTiptapOpen] = useState(false);
+
+  const handleNewMessageClick = () => {
+    setIsTiptapOpen(true);
+  };
+
+  const handleSend = () => {
+    setIsTiptapOpen(false);
+  };
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Members</h2>
         <div className="flex items-center space-x-2">
           <AddMemberForm user={user} />
+          <Dialog open={isTiptapOpen} onOpenChange={setIsTiptapOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleNewMessageClick}>New Message</Button>
+            </DialogTrigger>
+            <EmailComposer
+              userEmail={user.email}
+              supabase={supabase}
+              onSend={handleSend}
+            />
+          </Dialog>
         </div>
       </div>
       <div className="flex">
