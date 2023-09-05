@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import AddMemberForm from "@/components/add-member";
 import { MembersTable } from "@/components/members-table";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerComponentClient, withClientComponent } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import EmailComposer from "@/components/email-composer";
 
-export default async function Members() {
+export default withClientComponent(async function Members() {
   const supabase = createServerComponentClient({ cookies });
   const {
     data: { user },
