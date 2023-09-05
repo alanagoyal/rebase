@@ -13,6 +13,10 @@ export const siteConfig = {
       title: "Home",
       href: "/",
     },
+    {
+      title: "Mail",
+      href: "/members",
+    },
   ],
   secondaryNav: [
     {

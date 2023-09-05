@@ -24,11 +24,7 @@ export function MainNav({ items }: MainNavProps) {
                     item.disabled && "cursor-not-allowed opacity-80"
                   )}
                 >
-                  {item.title === "Home" && (
-                    <div>
-                      <span className="text-[#FAACA8] text-3xl">Re:</span>
-                    </div>
-                  )}
+                  {item.title}
                 </Link>
               )
           )}
