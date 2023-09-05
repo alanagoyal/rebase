@@ -148,15 +148,19 @@ export default function EmailComposer({
   const emailFormSchema = z.object({
     to_emails: z
       .array(
-        z.object({
-          value: z.string(),
-          label: z.string(),
-        })
+        z.union([
+          z.object({
+            value: z.string(),
+            label: z.string(),
+          }),
+          z.number(),
+        ])
       )
       .refine(
         (value) => {
           const emails = value.map((item) => item.value.trim());
           const areAllEmailsValid = emails.every((email) => {
+            ``;
             const isValid = z.string().email().safeParse(email).success;
             console.log(`Is email "${email}" valid?`, isValid); // Log the validation result for each email
             return isValid;
@@ -276,10 +280,10 @@ export default function EmailComposer({
                       <FormLabel className="text-base mx-2">To</FormLabel>
                     </div>
                     <FormControl className="w-full">
-                      <CreatableSelect
+                      <Select
                         {...field}
                         isMulti
-                        options={selectedMembers}
+                        options={[...selectedMembers, ...selectedMemberGroups]}
                       />
                       {/* <Input {...field} /> */}
                     </FormControl>
@@ -287,25 +291,6 @@ export default function EmailComposer({
                 )}
               />
               {/* TODO: putting in separate field for now, will combine later */}
-              <FormField
-                control={form.control}
-                name="group_emails"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
-                    <div className="space-y-0.5">
-                      <FormLabel className="text-base mx-2">To</FormLabel>
-                    </div>
-                    <FormControl className="w-full">
-                      <Select
-                        {...field}
-                        isMulti
-                        options={selectedMemberGroups}
-                      />
-                      {/* <Input {...field} /> */}
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
               <FormField
                 control={form.control}
                 name="subject"
