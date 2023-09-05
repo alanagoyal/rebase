@@ -106,4 +106,4 @@ export default withClientComponent(async function Members() {
       </div>
     </div>
   );
-}
+});
