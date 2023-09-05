@@ -246,17 +246,20 @@ export default function EmailComposer({
         console.log("Email sent successfully");
         onSend();
         form.reset();
+        toast({
+          description: "Your email has been sent successfully",
+        });
       } else {
-        console.error("Failed to send email");
+        console.error("Failed to send email", response.statusText);
+        toast({
+          description: response.statusText,
+        });
       }
     } catch (error) {
       console.error("Error sending email:", error);
     } finally {
       setIsSending(false);
     }
-    toast({
-      description: "Your email has been sent successfully",
-    });
   };
 
   return (
