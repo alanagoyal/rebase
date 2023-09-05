@@ -274,13 +274,6 @@ export default function EmailComposer({
         <div className="grid gap-4 py-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <Button
-                onClick={() => {
-                  console.log(form.getValues());
-                }}
-              >
-                STINKYSTINKY
-              </Button>{" "}
               <FormField
                 control={form.control}
                 name="to_emails"
