@@ -66,35 +66,12 @@ export default function Mailbox() {
     getUser();
   }, [supabase, setUser]);
 
-  const [isTiptapOpen, setIsTiptapOpen] = React.useState(false);
-
-  console.log(isTiptapOpen);
-
-  const handleNewMessageClick = () => {
-    setIsTiptapOpen(true);
-  };
-
-  const handleSend = () => {
-    setIsTiptapOpen(false);
-  };
-
   return (
     <div className="flex-1 space-y-4 p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Mailbox</h2>
         <div className="flex items-center space-x-2"></div>
       </div>
-      <Dialog open={isTiptapOpen} onOpenChange={setIsTiptapOpen}>
-        <DialogTrigger asChild>
-          <Button onClick={handleNewMessageClick}>New Message</Button>
-        </DialogTrigger>
-
-        <EmailComposer
-          userEmail={email}
-          supabase={supabase}
-          onSend={handleSend}
-        />
-      </Dialog>
     </div>
   );
 }
