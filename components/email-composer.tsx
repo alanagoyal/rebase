@@ -148,20 +148,20 @@ export default function EmailComposer({
   const emailFormSchema = z.object({
     to_emails: z
       .array(
-        z.union([
-          z.object({
-            value: z.string(),
-            label: z.string(),
-          }),
-          z.number(),
-        ])
+        z.object({
+          value: z.union([z.string(), z.number()]),
+          label: z.string(),
+        })
       )
       .refine(
         (value) => {
-          const emails = value.map((item) => item.value.trim());
+          console.log("mathuster is stinky", value);
+          const emails = value.map((item) => item.value.toString().trim());
           const areAllEmailsValid = emails.every((email) => {
             ``;
-            const isValid = z.string().email().safeParse(email).success;
+            const isValid =
+              !isNaN(parseInt(email)) ||
+              z.string().email().safeParse(email).success;
             console.log(`Is email "${email}" valid?`, isValid); // Log the validation result for each email
             return isValid;
           });
@@ -209,11 +209,12 @@ export default function EmailComposer({
     },
   });
 
-  selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
+  // selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
 
-  // console.log("SLECTEDMEMBER", selectedMembers);
+  console.log("SLECTEDMEMBER", selectedMembers);
 
   const onSubmit = async (data: EmailFormValues) => {
+    console.log("entered the onsubnit with", data);
     try {
       setIsSending(true);
 
@@ -221,7 +222,10 @@ export default function EmailComposer({
       let mergedEmails = toEmails;
 
       if (memberEmailsArray.length > 0) {
-        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])];
+        console.log(memberEmailsArray, "memberEmailsArray");
+        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])].filter(
+          (v) => isNaN(v)
+        );
       }
       console.log("MERGE", mergedEmails);
       const newEmailData = {
@@ -270,7 +274,13 @@ export default function EmailComposer({
         <div className="grid gap-4 py-4">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              {" "}
+              <Button
+                onClick={() => {
+                  console.log(form.getValues());
+                }}
+              >
+                STINKYSTINKY
+              </Button>{" "}
               <FormField
                 control={form.control}
                 name="to_emails"
