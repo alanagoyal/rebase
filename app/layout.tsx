@@ -6,8 +6,6 @@ import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { Metadata } from "next";
 import { siteConfig } from "@/config/site";
 
-export const dynamic = "force-dynamic";
-
 export const metadata: Metadata = {
   title: {
     default: siteConfig.name,
