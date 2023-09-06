@@ -91,6 +91,7 @@ export default function NewMessage() {
         </DialogTrigger>
 
         <EmailComposer
+          user={user}
           userEmail={email}
           supabase={supabase}
           onSend={handleSend}
