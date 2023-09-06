@@ -155,7 +155,6 @@ export default function EmailComposer({
       )
       .refine(
         (value) => {
-          console.log("mathuster is stinky", value);
           const emails = value.map((item) => item.value.toString().trim());
           const areAllEmailsValid = emails.every((email) => {
             ``;
@@ -214,63 +213,63 @@ export default function EmailComposer({
   console.log("SLECTEDMEMBER", selectedMembers);
 
   const onSubmit = async (data: EmailFormValues) => {
-      console.log("entered the onsubnit with", data);
-      try {
-        setIsSending(true);
-  
-        const toEmails = data.to_emails.map((email) => email.value);
-        let mergedEmails = toEmails;
-  
-        if (memberEmailsArray.length > 0) {
-          console.log(memberEmailsArray, "memberEmailsArray");
-          mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])].filter(
-            (v) => isNaN(v)
-          );
-        }
-        console.log("MERGE", mergedEmails);
-        const newEmailData = {
-          to_emails: mergedEmails,
-          subject: data.subject ? data.subject : "empty subject",
-          body: data.body ? data.body : "<p></p>",
-          cc_emails: [],
-          bcc_emails: [],
-          attachments: [],
-          from_email: userEmail,
-        };
-  
-        const response = await fetch("/send-email", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newEmailData),
-        });
-  
-        const { data: newEmail, error: insertError } = await supabase
-          .from("emails")
-          .insert([newEmailData]);
-  
-        if (response.ok) {
-          console.log("Email sent successfully");
-          onSend();
-          form.reset();
-          toast({
-            description: "Your email has been sent successfully",
-          });
-        } else {
-          console.error("Failed to send email", response.statusText);
-          toast({
-            description: response.statusText,
-          });
-        }
-      } catch (error) {
-        toast({
-          description: "An error occurred while sending the email",
-        });
-      } finally {
-        setIsSending(false);
+    console.log("entered the onsubnit with", data);
+    try {
+      setIsSending(true);
+
+      const toEmails = data.to_emails.map((email) => email.value);
+      let mergedEmails = toEmails;
+
+      if (memberEmailsArray.length > 0) {
+        console.log(memberEmailsArray, "memberEmailsArray");
+        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])].filter(
+          (v) => isNaN(v)
+        );
       }
-    };
+      console.log("MERGE", mergedEmails);
+      const newEmailData = {
+        to_emails: mergedEmails,
+        subject: data.subject ? data.subject : "empty subject",
+        body: data.body ? data.body : "<p></p>",
+        cc_emails: [],
+        bcc_emails: [],
+        attachments: [],
+        from_email: userEmail,
+      };
+
+      const response = await fetch("/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEmailData),
+      });
+
+      const { data: newEmail, error: insertError } = await supabase
+        .from("emails")
+        .insert([newEmailData]);
+
+      if (response.ok) {
+        console.log("Email sent successfully");
+        onSend();
+        form.reset();
+        toast({
+          description: "Your email has been sent successfully",
+        });
+      } else {
+        console.error("Failed to send email", response.statusText);
+        toast({
+          description: response.statusText,
+        });
+      }
+    } catch (error) {
+      toast({
+        description: "An error occurred while sending the email",
+      });
+    } finally {
+      setIsSending(false);
+    }
+  };
 
   return (
     <DialogContent className="sm:max-w-xl">
