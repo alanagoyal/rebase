@@ -1,13 +1,5 @@
 "use client";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+
 import { Database } from "@/types/supabase";
 import { Trash } from "lucide-react";
 import {
@@ -21,6 +13,16 @@ import { toast } from "./ui/use-toast";
 import { useRouter } from "next/navigation";
 import EditMemberForm from "./edit-member";
 import { useEffect, useState } from "react";
+import {
+  Table,
+  TableHead,
+  TableHeaderCell,
+  TableBody,
+  TableRow,
+  TableCell,
+  TableFoot,
+  TableFooterCell,
+} from "@tremor/react";
 
 type Member = Database["public"]["Tables"]["members"]["Row"];
 type GroupMappings = Record<string, string[]>;
@@ -86,14 +88,14 @@ export function MembersTable({
   console.log("members", members);
   return (
     <Table>
-      <TableHeader>
+      <TableHead>
         <TableRow>
-          <TableHead className="w-[100px]">Name</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Created Time</TableHead>
-          <TableHead>Group</TableHead>
+          <TableHeaderCell className="w-[100px]">Name</TableHeaderCell>
+          <TableHeaderCell>Email</TableHeaderCell>
+          <TableHeaderCell>Created Time</TableHeaderCell>
+          <TableHeaderCell>Group</TableHeaderCell>
         </TableRow>
-      </TableHeader>
+      </TableHead>
       <TableBody>
         {members.map((member: any) => (
           <TableRow key={member.id}>

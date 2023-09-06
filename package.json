@@ -25,6 +25,7 @@
     "@tiptap/pm": "^2.1.6",
     "@tiptap/react": "^2.1.6",
     "@tiptap/starter-kit": "^2.1.6",
+    "@tremor/react": "^3.7.2",
     "@vercel/og": "^0.5.8",
     "autoprefixer": "10.4.14",
     "class-variance-authority": "^0.6.1",
