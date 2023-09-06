@@ -34,10 +34,12 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export default function EmailComposer({
+  user,
   supabase,
   userEmail,
   onSend,
 }: {
+  user: any;
   supabase: SupabaseClient;
   userEmail: string;
   onSend: () => void;
@@ -48,7 +50,8 @@ export default function EmailComposer({
       try {
         const { data: members, error } = await supabase
           .from("members")
-          .select("id, first_name, last_name, email");
+          .select("id, first_name, last_name, email")
+          .eq("created_by", user.id);
         if (error) {
           console.error("Error fetching members:", error);
           return;
