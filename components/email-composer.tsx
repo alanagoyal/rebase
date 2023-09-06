@@ -158,7 +158,6 @@ export default function EmailComposer({
       )
       .refine(
         (value) => {
-          console.log("mathuster is stinky", value);
           const emails = value.map((item) => item.value.toString().trim());
           const areAllEmailsValid = emails.every((email) => {
             ``;
