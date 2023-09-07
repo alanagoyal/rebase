@@ -203,8 +203,8 @@ export default function EmailComposer({
       toast({
         description: (
           <span>
-            Please head to <a href="https://www.resend.com">Resend</a> to verify
-            your domain and start sending emails.
+            To start sending, please head over to{" "}
+            <a href="https://www.resend.com">Resend</a> to verify your domain.
           </span>
         ),
       });
