@@ -196,6 +196,22 @@ export default function EmailComposer({
   });
 
   const onSubmit = async (data: EmailFormValues) => {
+    // check that domain is verified
+    console.log(userEmail);
+    // check that userEmail contains @basecase.vc
+    if (!userEmail.includes("@basecase.vc")) {
+      toast({
+        description: (
+          <span>
+            Please head to <a href="https://www.resend.com">Resend</a> to verify
+            your domain and start sending emails.
+          </span>
+        ),
+      });
+      setIsSending(false);
+      return;
+    }
+
     try {
       setIsSending(true);
 

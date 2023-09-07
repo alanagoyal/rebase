@@ -36,9 +36,6 @@ import { Mail } from "lucide-react";
 
 export default function NewMessage({ user }: { user: any }) {
   const supabase = createClientComponentClient();
-  const [name, setName] = useState<any>(null);
-  const [email, setEmail] = useState<any>(null);
-
   const [isTiptapOpen, setIsTiptapOpen] = React.useState(false);
 
   const handleNewMessageClick = () => {
@@ -62,7 +59,7 @@ export default function NewMessage({ user }: { user: any }) {
 
         <EmailComposer
           user={user}
-          userEmail={email}
+          userEmail={user.email}
           supabase={supabase}
           onSend={handleSend}
         />
