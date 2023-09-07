@@ -47,6 +47,7 @@ export default function AddMemberForm({ user }: { user: any }) {
   const [selectedGroups, setSelectedGroups] =
     React.useState<MultiValue<number> | null>(null); // State to track selected group
   const [open, setOpen] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
   const router = useRouter();
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
@@ -72,7 +73,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       }
     }
     fetchMemberGroups();
-  }, [supabase]);
+  }, [supabase, submitted]);
 
   interface MemberGroup {
     id: number;
@@ -176,6 +177,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       toast({
         description: "Your member has been added",
       });
+      setSubmitted(true);
       router.refresh();
     } catch (error) {
       console.log(error);
