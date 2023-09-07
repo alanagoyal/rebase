@@ -151,7 +151,7 @@ export default function EditMemberForm({
     if (!!newGroups.length) {
       const groupResponse = await supabase
         .from("member_groups")
-        .insert(newGroups.map((name) => ({ name })))
+        .insert(newGroups.map((name) => ({ name, created_by: user?.id })))
         .select();
       const { data: createdGroups, error: createGroupError } = groupResponse;
       if (createGroupError) {
