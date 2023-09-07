@@ -39,11 +39,13 @@ export default function EmailComposer({
   userEmail,
   onSend,
 }: {
+  
   user: any;
   supabase: SupabaseClient;
   userEmail: string;
   onSend: () => void;
 }) {
+  
   useEffect(() => {
     // Fetch members from your Supabase database
     async function fetchMembers() {
@@ -78,10 +80,12 @@ export default function EmailComposer({
   const [memberEmailsArray, setMemberEmailsArray] = useState([]);
 
   useEffect(() => {
+    console.log("user here", user);
     async function fetchMemberGroups() {
       const { data: member_groups, error } = await supabase
         .from("member_groups")
-        .select();
+        .select()
+        .eq("created_by", user.id);
 
       // Transform the memebrGroup data for the selected component
       const options = member_groups.map((member_group) => ({
@@ -96,8 +100,10 @@ export default function EmailComposer({
         setAllMemberGroups(options);
       }
     }
-    fetchMemberGroups();
-  }, [supabase]);
+    if (user) {
+      fetchMemberGroups();
+    }
+  }, [supabase, user]);
 
   async function fetchMemberGroupEmails(group_ids) {
     // Extract group_ids from the fetched member_groups
