@@ -59,7 +59,10 @@ export default function AddMemberForm({ user }: { user: any }) {
 
   React.useEffect(() => {
     async function fetchMemberGroups() {
-      const { data, error } = await supabase.from("member_groups").select();
+      const { data, error } = await supabase
+        .from("member_groups")
+        .select()
+        .eq("created_by", user.id);
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
@@ -76,6 +79,7 @@ export default function AddMemberForm({ user }: { user: any }) {
   }
 
   async function onSubmit(data: MemberFormValues) {
+    console.log("DATA", selectedGroups);
     try {
       // Get the IDs of the selected groups that already exist in memberGroups
       const existingGroupIds = selectedGroups
@@ -109,7 +113,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       if (!!newGroups.length) {
         const groupResponse = await supabase
           .from("member_groups")
-          .insert(newGroups.map((name) => ({ name })))
+          .insert(newGroups.map((name) => ({ name, created_by: user.id })))
           .select();
         console.log("gr", groupResponse);
         const { data: createdGroups, error: createGroupError } = groupResponse;
