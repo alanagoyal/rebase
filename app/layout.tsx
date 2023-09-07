@@ -61,4 +61,21 @@ export default function RootLayout({
             <div className="flex-1"></div>
           </div>
           <TailwindIndicator />
+        </ThemeProvider>
+        </body>
+        </html>
+        );
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+          <div className="relative flex min-h-screen flex-col">
+            <div className="banner">
+              <a href="https://basecase.vc/blog/building-with-the-batch-s23">
+                Read about how we built Rebase 👉🏼
+              </a>
+            </div>
+            <SiteHeader />
+            <Toaster />
+            {children}
+            <div className="flex-1"></div>
+          </div>
+          <TailwindIndicator />
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
