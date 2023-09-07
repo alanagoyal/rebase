@@ -36,7 +36,6 @@ import EmailComposer from "@/components/email-composer";
 export default async function Mailbox() {
   const supabase = createClientComponentClient();
 
-  
   const [name, setName] = useState<any>(null);
   const [email, setEmail] = useState<any>(null);
 
@@ -45,8 +44,6 @@ export default async function Mailbox() {
   } = await supabase.auth.getUser();
 
   const [isTiptapOpen, setIsTiptapOpen] = React.useState(false);
-
-  console.log(isTiptapOpen);
 
   const handleNewMessageClick = () => {
     setIsTiptapOpen(true);

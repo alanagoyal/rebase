@@ -34,16 +34,12 @@ import * as z from "zod";
 import EmailComposer from "@/components/email-composer";
 import { Mail } from "lucide-react";
 
-export default function NewMessage( {user}: { user: any }) {
+export default function NewMessage({ user }: { user: any }) {
   const supabase = createClientComponentClient();
   const [name, setName] = useState<any>(null);
   const [email, setEmail] = useState<any>(null);
 
-  console.log("USER", user)
-
   const [isTiptapOpen, setIsTiptapOpen] = React.useState(false);
-
-  console.log(isTiptapOpen);
 
   const handleNewMessageClick = () => {
     setIsTiptapOpen(true);

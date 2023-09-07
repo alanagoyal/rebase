@@ -55,9 +55,7 @@ export function MembersTable({
         description: "Your member has been deleted",
       });
       router.refresh();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -82,10 +80,6 @@ export function MembersTable({
     setGroupMemberships(groupMemberships);
   }, [members, groupMappings, groupNamesData]);
 
-  console.log("groupMappings", groupMappings);
-  console.log("groupNamesData", groupNamesData);
-
-  console.log("members", members);
   return (
     <Table>
       <TableHeader>

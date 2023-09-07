@@ -81,7 +81,6 @@ export default function EditMemberForm({
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        console.log("member groups", data);
         setMemberGroups(data);
       }
     }
@@ -111,11 +110,6 @@ export default function EditMemberForm({
     }
   }, [existingGroups]);
 
-  console.log("Select", selectedGroups);
-  console.log("EIT", existingGroups);
-  const existingGroupIds = existingGroups ? existingGroups.split(",") : [];
-
-  console.log("existingIDs", existingGroupIds);
   async function onSubmit(data: MemberFormValues) {
     const {
       data: { user },
@@ -159,9 +153,7 @@ export default function EditMemberForm({
         .from("member_groups")
         .insert(newGroups.map((name) => ({ name })))
         .select();
-      console.log("gr", groupResponse);
       const { data: createdGroups, error: createGroupError } = groupResponse;
-      console.log("created groups", createdGroups);
       if (createGroupError) {
         console.error("Error creating new group:", createGroupError);
       } else {
@@ -182,8 +174,6 @@ export default function EditMemberForm({
       const selectedGroupIds = selectedGroups
         ? selectedGroups.map((group) => group.value)
         : [];
-
-      console.log("SId", selectedGroupIds);
 
       if (!!selectedGroups?.length && member.id) {
         // Insert new associations
@@ -223,19 +213,6 @@ export default function EditMemberForm({
       });
     }
   }
-
-  // React.useEffect(() => {
-  //   async function fetchMemberGroups() {
-  //     const { data, error } = await supabase.from("member_groups").select();
-  //     if (error) {
-  //       console.error("Error fetching member groups:", error);
-  //     } else {
-  //       console.log("member groups", data);
-  //       setMemberGroups(data);
-  //     }
-  //   }
-  //   fetchMemberGroups();
-  // }, [supabase]);
 
   return (
     <div>
@@ -321,7 +298,6 @@ export default function EditMemberForm({
                           }))}
                           value={selectedGroups}
                           onChange={(value) => {
-                            console.log("creatable value", value);
                             setSelectedGroups(value);
                           }}
                         />

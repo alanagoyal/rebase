@@ -191,14 +191,12 @@ const MenuBar = ({ editor }) => {
 export default ({ setValue, field }) => {
   const editor = useEditor({
     onUpdate: ({ editor }) => {
-      console.log("updating to", editor.getHTML());
       // Update the form field value when the editor's content changes
       field.onChange(editor.getHTML());
     },
     onMounted: () => {
       // Set the initial value when the editor is mounted
       setValue(fieldName, editor.getHTML());
-      console.log("mounte");
     },
     extensions: [
       StarterKit,
@@ -214,7 +212,6 @@ export default ({ setValue, field }) => {
   return (
     <div>
       <MenuBar editor={editor} />
-      {console.log(editor?.getHTML())}
       <EditorContent editor={editor} />
     </div>
   );

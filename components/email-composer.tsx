@@ -39,13 +39,11 @@ export default function EmailComposer({
   userEmail,
   onSend,
 }: {
-  
   user: any;
   supabase: SupabaseClient;
   userEmail: string;
   onSend: () => void;
 }) {
-  
   useEffect(() => {
     // Fetch members from your Supabase database
     async function fetchMembers() {
@@ -80,7 +78,6 @@ export default function EmailComposer({
   const [memberEmailsArray, setMemberEmailsArray] = useState([]);
 
   useEffect(() => {
-    console.log("user here", user);
     async function fetchMemberGroups() {
       const { data: member_groups, error } = await supabase
         .from("member_groups")
@@ -96,7 +93,6 @@ export default function EmailComposer({
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        console.log("member groups", options);
         setAllMemberGroups(options);
       }
     }
@@ -117,21 +113,17 @@ export default function EmailComposer({
       .select("member_id")
       .in("group_id", groupIds);
 
-    console.log("memebrGroupJoins", memberGroupJoins);
     const memberGroupArray = Object.values(memberGroupJoins);
     const memberIds = memberGroupArray.map((join) => join.member_id);
-    console.log("memberIds", memberIds);
 
     // Fetch member emails from the members table based on the extracted member_ids
     const { data: memberEmails, error: memberEmailError } = await supabase
       .from("members")
       .select("email")
       .in("id", memberIds);
-    console.log("memberEmails", memberEmails);
     const array = memberEmails.map((join) => join.email);
     setMemberEmailsArray(array);
     // const memberEmailsArray = Object.values(memberEmails);
-    console.log("ARRAY", memberEmailsArray);
     return array;
   }
 
@@ -158,7 +150,6 @@ export default function EmailComposer({
             const isValid =
               !isNaN(parseInt(email)) ||
               z.string().email().safeParse(email).success;
-            console.log(`Is email "${email}" valid?`, isValid); // Log the validation result for each email
             return isValid;
           });
           return areAllEmailsValid;
@@ -204,12 +195,7 @@ export default function EmailComposer({
     },
   });
 
-  // selectedMembers.map((email) => console.log("SLCTEDMEMBER", email));
-
-  console.log("SLECTEDMEMBER", selectedMembers);
-
   const onSubmit = async (data: EmailFormValues) => {
-    console.log("entered the onsubnit with", data);
     try {
       setIsSending(true);
 
@@ -219,12 +205,10 @@ export default function EmailComposer({
         toEmails.filter((em) => !isNaN(em))
       );
       // if (memberEmails.length > 0) {
-      console.log(memberEmailsArray, "memberEmailsArray");
       mergedEmails = [...new Set([...toEmails, ...memberEmails])].filter((v) =>
         isNaN(v)
       );
       // }
-      console.log("MERGE", mergedEmails);
       const newEmailData = {
         to_emails: mergedEmails,
         subject: data.subject ? data.subject : "empty subject",
@@ -248,7 +232,6 @@ export default function EmailComposer({
         .insert([newEmailData]);
 
       if (response.ok) {
-        console.log("Email sent successfully");
         onSend();
         form.reset();
         toast({
