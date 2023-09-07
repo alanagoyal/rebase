@@ -76,7 +76,7 @@ export default function EditMemberForm({
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        console.log("member groups", data);
+        // console.log("member groups", data);
         setMemberGroups(data);
       }
     }
@@ -106,81 +106,83 @@ export default function EditMemberForm({
     }
   }, [existingGroups]);
 
-  console.log("Select", selectedGroups);
-  console.log("EIT", existingGroups);
+  // console.log("Select", selectedGroups);
+  // console.log("EIT", existingGroups);
   const existingGroupIds = existingGroups ? existingGroups.split(",") : [];
 
-  console.log("existingIDs", existingGroupIds);
+  // console.log("existingIDs", existingGroupIds);
   async function onSubmit(data: MemberFormValues) {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-  
-      let groupIds = [];
-  
-      // Delete all existing associations for the member
-      const { error: deleteError } = await supabase
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    let groupIds = [];
+
+    // Delete all existing associations for the member
+    const { error: deleteError } = await supabase
       .from("member_group_joins")
       .delete()
       .eq("member_id", member.id);
-      if (deleteError) {
+    if (deleteError) {
       console.error("Error deleting existing associations:", deleteError);
-      }
-  
-      // Get the IDs of the selected groups that already exist in memberGroups
-      // Get the IDs of the selected groups that already exist in memberGroups
-      const existingGroupIds = selectedGroups
-        ?.filter((group) =>
-          memberGroups?.map(({ name }) => name).includes(group.value)
+    }
+
+    // Get the IDs of the selected groups that already exist in memberGroups
+    // Get the IDs of the selected groups that already exist in memberGroups
+    const existingGroupIds = selectedGroups
+      ?.filter(
+        (group) => memberGroups?.map(({ name }) => name).includes(group.value),
+      )
+      .map(
+        (group) => memberGroups.find(({ name }) => name === group.value)?.id,
+      );
+
+    // Add the IDs of the existing groups to groupIds
+
+    // Save new groups - if the member group doesn't hold any of the selected groups
+    const newGroups =
+      selectedGroups
+        ?.filter(
+          (group) =>
+            !memberGroups?.map(({ name }) => name).includes(group.value),
         )
-        .map((group) => memberGroups.find(({ name }) => name === group.value)?.id);
-  
-      // Add the IDs of the existing groups to groupIds
-     
-      // Save new groups - if the member group doesn't hold any of the selected groups
-      const newGroups =
-        selectedGroups
-          ?.filter(
-            (group) =>
-              !memberGroups?.map(({ name }) => name).includes(group.value)
-          )
-          .map(({ value }) => value) || [];
-  
-      //Creating a new group if there are elements in the newgroup array
-      if (!!newGroups.length) {
-        const groupResponse = await supabase
-          .from("member_groups")
-          .insert(newGroups.map((name) => ({ name })))
-          .select();
-        console.log("gr", groupResponse);
-        const { data: createdGroups, error: createGroupError } = groupResponse;
-        console.log("created groups", createdGroups);
-        if (createGroupError) {
-          console.error("Error creating new group:", createGroupError);
-        } else {
-          if (Array.isArray(createdGroups) && createdGroups.length > 0) {
-            groupIds = createdGroups.map(({ id }) => id);
-          }
+        .map(({ value }) => value) || [];
+
+    //Creating a new group if there are elements in the newgroup array
+    if (!!newGroups.length) {
+      const groupResponse = await supabase
+        .from("member_groups")
+        .insert(newGroups.map((name) => ({ name })))
+        .select();
+      console.log("gr", groupResponse);
+      const { data: createdGroups, error: createGroupError } = groupResponse;
+      console.log("created groups", createdGroups);
+      if (createGroupError) {
+        console.error("Error creating new group:", createGroupError);
+      } else {
+        if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+          groupIds = createdGroups.map(({ id }) => id);
         }
-      } 
-  
-      try {
-        const updates = {
-          email: data.email,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          created_by: user?.id,
-        };
-  
-        const selectedGroupIds = selectedGroups
-          ? selectedGroups.map((group) => group.value)
-          : [];
-  
-        console.log("SId", selectedGroupIds);
-  
-        if (!!selectedGroups?.length && member.id) {
-         // Insert new associations
-          const joinUpdates = selectedGroups
+      }
+    }
+
+    try {
+      const updates = {
+        email: data.email,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        created_by: user?.id,
+      };
+
+      const selectedGroupIds = selectedGroups
+        ? selectedGroups.map((group) => group.value)
+        : [];
+
+      // console.log("SId", selectedGroupIds);
+
+      if (!!selectedGroups?.length && member.id) {
+        // Insert new associations
+        const joinUpdates = selectedGroups
           ?.map((group) => memberGroups.find((g) => g.name === group.value)?.id)
           .concat(groupIds)
           .filter((id) => id !== undefined)
@@ -188,41 +190,41 @@ export default function EditMemberForm({
             member_id: member.id,
             group_id: memberGroupId,
           }));
-  
-          const { error: joinError } = await supabase
-            .from("member_group_joins")
-            .insert(joinUpdates);
-          if (joinError) {
-            console.error("Error updating member_group_joins:", joinError);
-          }
+
+        const { error: joinError } = await supabase
+          .from("member_group_joins")
+          .insert(joinUpdates);
+        if (joinError) {
+          console.error("Error updating member_group_joins:", joinError);
         }
-        let { error } = await supabase
-          .from("members")
-          .update(updates)
-          .eq("id", member.id);
-        if (error) {
-          toast({
-            description: "An error occurred while updating the member",
-          });
-        } else {
-          toast({
-            description: "Your member has been updated",
-          });
-          router.refresh();
-        }
-      } catch (error) {
+      }
+      let { error } = await supabase
+        .from("members")
+        .update(updates)
+        .eq("id", member.id);
+      if (error) {
         toast({
           description: "An error occurred while updating the member",
         });
+      } else {
+        toast({
+          description: "Your member has been updated",
+        });
+        router.refresh();
       }
+    } catch (error) {
+      toast({
+        description: "An error occurred while updating the member",
+      });
     }
+  }
 
   // React.useEffect(() => {
   //   async function fetchMemberGroups() {
   //     const { data, error } = await supabase.from("member_groups").select();
   //     if (error) {
-  //       console.error("Error fetching member groups:", error);
-  //     } else {
+  // console.log("gr", groupResponse);
+  // console.log("created groups", createdGroups);
   //       console.log("member groups", data);
   //       setMemberGroups(data);
   //     }
@@ -314,7 +316,7 @@ export default function EditMemberForm({
                           }))}
                           value={selectedGroups}
                           onChange={(value) => {
-                            console.log("creatable value", value);
+                            // console.log("creatable value", value);
                             setSelectedGroups(value);
                           }}
                         />

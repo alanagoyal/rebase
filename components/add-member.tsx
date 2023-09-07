@@ -67,7 +67,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        console.log("member groups", data);
+        // console.log("member groups", data);
         setSelectedGroups(null);
         setMemberGroups(data);
       }
@@ -81,8 +81,8 @@ export default function AddMemberForm({ user }: { user: any }) {
   }
 
   async function onSubmit(data: MemberFormValues) {
-    console.log("DATA", selectedGroups);
-    try {
+    // console.log("gr", groupResponse);
+    // console.log("created groups", createdGroups);
       // Get the IDs of the selected groups that already exist in memberGroups
       const existingGroupIds = selectedGroups
         ?.filter((group) =>
@@ -96,7 +96,8 @@ export default function AddMemberForm({ user }: { user: any }) {
       // groupIds = groupIds.concat(existingGroupIds);
 
       // Add the IDs of the existing groups to groupIds
-      console.log("memberGroups", memberGroups);
+      // console.log("memberGroups", memberGroups);
+      // console.log("newgroups", newGroups);
       // Check if the selectedGroups exists in memberGroups
       const newGroups =
         selectedGroups
@@ -147,7 +148,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       }
       const memberID = newMember[0].id;
 
-      console.log("SELECT", selectedGroups);
+      // console.log("SELECT", selectedGroups);
 
       // Update the joins table to associate the member with the group
       if (!!selectedGroups?.length && memberID) {
@@ -180,7 +181,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       setSubmitted(true);
       router.refresh();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
   }
 
@@ -273,7 +274,7 @@ export default function AddMemberForm({ user }: { user: any }) {
                           }))} // Convert memberGroups to options
                           value={selectedGroups}
                           onChange={(value) => {
-                            console.log("creatable value", value);
+                            // console.log("creatable value", value);
                             setSelectedGroups(value);
                           }}
                         />
