@@ -72,15 +72,8 @@ export default function EmailComposer({
     fetchMembers();
   }, []); // Run this effect only once on component mount
 
-  // interface MemberGroup {
-  //   id: number;
-  //   label: string;
-  // }
-
   const [selectedMembers, setSelectedMembers] = useState<OptionType[]>([]);
-  const [selectedMemberGroups, setSelectedMemberGroups] = useState<
-    OptionType[]
-  >([]);
+  const [allMemberGroups, setAllMemberGroups] = useState<OptionType[]>([]);
 
   const [memberEmailsArray, setMemberEmailsArray] = useState([]);
 
@@ -100,46 +93,41 @@ export default function EmailComposer({
         console.error("Error fetching member groups:", error);
       } else {
         console.log("member groups", options);
-        setSelectedMemberGroups(options);
+        setAllMemberGroups(options);
       }
     }
     fetchMemberGroups();
   }, [supabase]);
 
-  //Fetch member ids for the selected groups
-  useEffect(() => {
-    async function fetchMemberGroupEmails() {
-      // Extract group_ids from the fetched member_groups
-      const groupIds = selectedMemberGroups.map(
-        (selectedMemberGroup) => selectedMemberGroup.value
-      );
+  async function fetchMemberGroupEmails(group_ids) {
+    // Extract group_ids from the fetched member_groups
+    const groupIds = allMemberGroups
+      .map((allMemberGroup) => allMemberGroup.value)
+      .filter((id) => group_ids.includes(id));
 
-      // Fetch member_group_joins records with these group_ids
-      const { data: memberGroupJoins, error: joinError } = await supabase
-        .from("member_group_joins")
-        .select("member_id")
-        .in("group_id", groupIds);
+    // Fetch member_group_joins records with these group_ids
+    const { data: memberGroupJoins, error: joinError } = await supabase
+      .from("member_group_joins")
+      .select("member_id")
+      .in("group_id", groupIds);
 
-      console.log("memebrGroupJoins", memberGroupJoins);
-      const memberGroupArray = Object.values(memberGroupJoins);
-      const memberIds = memberGroupArray.map((join) => join.member_id);
-      console.log("memberIds", memberIds);
+    console.log("memebrGroupJoins", memberGroupJoins);
+    const memberGroupArray = Object.values(memberGroupJoins);
+    const memberIds = memberGroupArray.map((join) => join.member_id);
+    console.log("memberIds", memberIds);
 
-      // Fetch member emails from the members table based on the extracted member_ids
-      const { data: memberEmails, error: memberEmailError } = await supabase
-        .from("members")
-        .select("email")
-        .in("id", memberIds);
-      console.log("memberEmails", memberEmails);
-      const array = memberEmails.map((join) => join.email);
-      setMemberEmailsArray(array);
-      // const memberEmailsArray = Object.values(memberEmails);
-      console.log("ARRAY", memberEmailsArray);
-    }
-    if (selectedMemberGroups.length > 0) {
-      fetchMemberGroupEmails();
-    }
-  }, [selectedMemberGroups]);
+    // Fetch member emails from the members table based on the extracted member_ids
+    const { data: memberEmails, error: memberEmailError } = await supabase
+      .from("members")
+      .select("email")
+      .in("id", memberIds);
+    console.log("memberEmails", memberEmails);
+    const array = memberEmails.map((join) => join.email);
+    setMemberEmailsArray(array);
+    // const memberEmailsArray = Object.values(memberEmails);
+    console.log("ARRAY", memberEmailsArray);
+    return array;
+  }
 
   interface OptionType {
     value: any;
@@ -196,7 +184,6 @@ export default function EmailComposer({
       .optional(),
   });
 
-  console.log("GRP", selectedMemberGroups);
   type EmailFormValues = z.infer<typeof emailFormSchema>;
 
   const form = useForm<EmailFormValues>({
@@ -222,13 +209,15 @@ export default function EmailComposer({
 
       const toEmails = data.to_emails.map((email) => email.value);
       let mergedEmails = toEmails;
-
-      if (memberEmailsArray.length > 0) {
-        console.log(memberEmailsArray, "memberEmailsArray");
-        mergedEmails = [...new Set([...toEmails, ...memberEmailsArray])].filter(
-          (v) => isNaN(v)
-        );
-      }
+      const memberEmails = await fetchMemberGroupEmails(
+        toEmails.filter((em) => !isNaN(em))
+      );
+      // if (memberEmails.length > 0) {
+      console.log(memberEmailsArray, "memberEmailsArray");
+      mergedEmails = [...new Set([...toEmails, ...memberEmails])].filter((v) =>
+        isNaN(v)
+      );
+      // }
       console.log("MERGE", mergedEmails);
       const newEmailData = {
         to_emails: mergedEmails,
@@ -293,7 +282,7 @@ export default function EmailComposer({
                       <Select
                         {...field}
                         isMulti
-                        options={[...selectedMembers, ...selectedMemberGroups]}
+                        options={[...selectedMembers, ...allMemberGroups]}
                       />
                     </FormControl>
                   </FormItem>
