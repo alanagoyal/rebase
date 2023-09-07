@@ -62,7 +62,6 @@ export default function RootLayout({
           </div>
           <TailwindIndicator />
         </ThemeProvider>
-      </body>
-    </html>
-  );
-}
+        </body>
+        </html>
+        );
