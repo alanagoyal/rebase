@@ -4,8 +4,9 @@ require("dotenv").config();
 
 export const siteConfig = {
   name: "Re:base",
-  description: "The open-source email platform",
-  authorName: "Alana Goyal",
+  description:
+    "The open-source email platform purpose-built for investor updates",
+  authorName: "Alana",
   url: process.env.SITE_URL!,
   ogImage: `${process.env.SITE_URL}/opengraph-image`,
   mainNav: [
@@ -30,6 +31,6 @@ export const siteConfig = {
   ],
   links: {
     twitter: "https://twitter.com/alanaagoyal",
-    github: "https://github.com/alanagoyal",
+    github: "https://github.com/alanagoyal/rebase",
   },
 };
