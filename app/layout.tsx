@@ -65,4 +65,3 @@ export default function RootLayout({
         </body>
         </html>
         );
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
