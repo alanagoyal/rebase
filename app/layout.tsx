@@ -61,8 +61,4 @@ export default function RootLayout({
             <div className="flex-1"></div>
           </div>
           <TailwindIndicator />
-        </ThemeProvider>
-      </body>
-    </html>
-  );
-}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
