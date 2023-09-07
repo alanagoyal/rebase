@@ -41,7 +41,7 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
-export default function AddMemberForm({ user }: { user: any }) {
+export default function AddMemberForm({ user, setUser }: { user: any }) {
   const supabase = createClientComponentClient();
   const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]); // State to store member groups
   const [selectedGroups, setSelectedGroups] =
@@ -67,7 +67,6 @@ export default function AddMemberForm({ user }: { user: any }) {
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        console.log("member groups", data);
         setSelectedGroups(null);
         setMemberGroups(data);
       }
@@ -81,7 +80,6 @@ export default function AddMemberForm({ user }: { user: any }) {
   }
 
   async function onSubmit(data: MemberFormValues) {
-    console.log("DATA", selectedGroups);
     try {
       // Get the IDs of the selected groups that already exist in memberGroups
       const existingGroupIds = selectedGroups
@@ -96,7 +94,6 @@ export default function AddMemberForm({ user }: { user: any }) {
       // groupIds = groupIds.concat(existingGroupIds);
 
       // Add the IDs of the existing groups to groupIds
-      console.log("memberGroups", memberGroups);
       // Check if the selectedGroups exists in memberGroups
       const newGroups =
         selectedGroups
@@ -105,8 +102,6 @@ export default function AddMemberForm({ user }: { user: any }) {
               !memberGroups?.map(({ name }) => name).includes(group.value)
           )
           .map(({ value }) => value) || [];
-
-      console.log("newgroups", newGroups);
 
       // groupIds = selectedGroups?.map((group) => group.value);
 
@@ -117,9 +112,7 @@ export default function AddMemberForm({ user }: { user: any }) {
           .from("member_groups")
           .insert(newGroups.map((name) => ({ name, created_by: user.id })))
           .select();
-        console.log("gr", groupResponse);
         const { data: createdGroups, error: createGroupError } = groupResponse;
-        console.log("created groups", createdGroups);
         if (createGroupError) {
           console.error("Error creating new group:", createGroupError);
         } else {
@@ -146,8 +139,6 @@ export default function AddMemberForm({ user }: { user: any }) {
         throw memberError;
       }
       const memberID = newMember[0].id;
-
-      console.log("SELECT", selectedGroups);
 
       // Update the joins table to associate the member with the group
       if (!!selectedGroups?.length && memberID) {
@@ -179,9 +170,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       });
       setSubmitted(true);
       router.refresh();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   return (
@@ -273,7 +262,6 @@ export default function AddMemberForm({ user }: { user: any }) {
                           }))} // Convert memberGroups to options
                           value={selectedGroups}
                           onChange={(value) => {
-                            console.log("creatable value", value);
                             setSelectedGroups(value);
                           }}
                         />

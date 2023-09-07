@@ -1,3 +1,7 @@
+[Rebase](https://re-base.vercel.app) is an open-source email platform purpose-built for sending investor updates. As a founder, I send monthly update emails to my investors to share what I've been up to using a product called [Cabal](https://getcabal.com). I’m a huge fan of their product, so I wanted to try to build my own from scratch.
+
+Please note that the product is only designed for verified domains. If you want to use it, you'll need to register a domain and verify it with [Resend](https://resend.com) (see below).
+
 ## Getting Started
 
 1. Clone the repository `git clone https://github.com/alanagoyal/rebase`
@@ -7,7 +11,7 @@
 
 ## Supabase
 
-Follow [these instructions](https://supabase.com/docs/guides/getting-started/local-development) for local development.
+This project uses [Supabase](https://supabase.com) to store users, members, and groups. Follow [these instructions](https://supabase.com/docs/guides/getting-started/local-development) to apply the migration and get started with your own project.
 
 ## Resend
 

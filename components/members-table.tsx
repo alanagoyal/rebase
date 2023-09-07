@@ -33,10 +33,12 @@ export function MembersTable({
   members,
   groupMappings,
   groupNamesData,
+  user,
 }: {
   members: Member[];
   groupMappings: GroupMappings;
   groupNamesData: GroupName;
+  user: any;
 }) {
   const supabase = createClientComponentClient();
   const [groupMemberships, setGroupMemberships] = useState<
@@ -53,9 +55,7 @@ export function MembersTable({
         description: "Your member has been deleted",
       });
       router.refresh();
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 
   useEffect(() => {
@@ -80,10 +80,6 @@ export function MembersTable({
     setGroupMemberships(groupMemberships);
   }, [members, groupMappings, groupNamesData]);
 
-  console.log("groupMappings", groupMappings);
-  console.log("groupNamesData", groupNamesData);
-
-  console.log("members", members);
   return (
     <Table>
       <TableHeader>
@@ -110,6 +106,7 @@ export function MembersTable({
                 <Tooltip>
                   <TooltipTrigger>
                     <EditMemberForm
+                      user={user}
                       existingGroups={groupMemberships[member.id]}
                       member={member}
                     />
