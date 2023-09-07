@@ -69,11 +69,12 @@ export default async function Members() {
         <h2 className="text-3xl font-bold tracking-tight">Members</h2>
         <div className="flex items-center space-x-2">
           <AddMemberForm user={user} />
-          <NewMessage  user={user}/>
+          <NewMessage user={user} />
         </div>
       </div>
       <div className="flex">
         <MembersTable
+          user={user}
           members={members!}
           groupMappings={memberGroupInfo}
           groupNamesData={groupNamesData}

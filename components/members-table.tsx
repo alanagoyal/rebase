@@ -33,10 +33,12 @@ export function MembersTable({
   members,
   groupMappings,
   groupNamesData,
+  user,
 }: {
   members: Member[];
   groupMappings: GroupMappings;
   groupNamesData: GroupName;
+  user: any;
 }) {
   const supabase = createClientComponentClient();
   const [groupMemberships, setGroupMemberships] = useState<
@@ -110,6 +112,7 @@ export function MembersTable({
                 <Tooltip>
                   <TooltipTrigger>
                     <EditMemberForm
+                      user={user}
                       existingGroups={groupMemberships[member.id]}
                       member={member}
                     />

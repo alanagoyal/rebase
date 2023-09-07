@@ -48,11 +48,13 @@ interface MemberGroup {
 }
 
 export default function EditMemberForm({
+  user,
   member,
   existingGroups,
 }: {
   member: { id: string; email: string; first_name: string; last_name: string };
   existingGroups: string[];
+  user: any;
 }) {
   //track all the groups
   const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]);
