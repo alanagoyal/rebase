@@ -41,7 +41,7 @@ const memberFormSchema = z.object({
 
 type MemberFormValues = z.infer<typeof memberFormSchema>;
 
-export default function AddMemberForm({ user }: { user: any }) {
+export default function AddMemberForm({ user, setUser }: { user: any }) {
   const supabase = createClientComponentClient();
   const [memberGroups, setMemberGroups] = React.useState<MemberGroup[]>([]); // State to store member groups
   const [selectedGroups, setSelectedGroups] =
