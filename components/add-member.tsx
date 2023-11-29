@@ -180,8 +180,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       toast({
         description: "Your member has been added",
       });
-      setSubmitted(true);
-      router.refresh();
+      setSubmitted(true); router.refresh();
     } catch (error) {
       
     }
