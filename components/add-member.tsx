@@ -68,6 +68,7 @@ export default function AddMemberForm({ user }: { user: any }) {
         if (error) {
           console.error("Error fetching member groups:", error);
         } else {
+          
           setSelectedGroups(null);
           setMemberGroups(data);
         }
@@ -97,8 +98,7 @@ export default function AddMemberForm({ user }: { user: any }) {
         // groupIds = groupIds.concat(existingGroupIds);
 
         // Add the IDs of the existing groups to groupIds
-        // console.log("memberGroups", memberGroups);
-        // console.log("newgroups", newGroups);
+        // Removed console.log statements
         // Check if the selectedGroups exists in memberGroups
         const newGroups =
           ?.filter(
