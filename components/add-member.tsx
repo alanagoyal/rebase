@@ -60,77 +60,76 @@ export default function AddMemberForm({ user }: { user: any }) {
 
   React.useEffect(() => {
     async function fetchMemberGroups() {
-      const { data, error } = await supabase
-        .from("member_groups")
-        .select()
-        .eq("created_by", user.id);
-      if (error) {
+      try {
+        const { data, error } = await supabase
+          .from("member_groups")
+          .select()
+          .eq("created_by", user.id);
+        if (error) {
+          console.error("Error fetching member groups:", error);
+        } else {
+          
+          setSelectedGroups(null);
+          setMemberGroups(data);
+        }
+      } catch (error) {
         console.error("Error fetching member groups:", error);
-      } else {
-        
-        setSelectedGroups(null);
-        setMemberGroups(data);
       }
+      fetchMemberGroups();
+    }, [supabase, submitted]);
+
+    interface MemberGroup {
+      id: number;
+      name: string;
     }
-    fetchMemberGroups();
-  }, [supabase, submitted]);
 
-  interface MemberGroup {
-    id: number;
-    name: string;
-  }
+    async function onSubmit(data: MemberFormValues) {
+      try {
+        // Get the IDs of the selected groups that already exist in memberGroups
+        const existingGroupIds = selectedGroups
+          ?.filter((group) =>
+            memberGroups?.map(({ name }) => name).includes(group.value)
+          )
+          .map(
+            (group) => memberGroups.find(({ name }) => name === group.value)?.id
+          );
 
-  async function onSubmit(data: MemberFormValues) {
-    
-      // Get the IDs of the selected groups that already exist in memberGroups
-      const existingGroupIds = selectedGroups
-        ?.filter((group) =>
-          memberGroups?.map(({ name }) => name).includes(group.value)
-        )
-        .map(
-          (group) => memberGroups.find(({ name }) => name === group.value)?.id
-        );
+        // let groupIds = [];
+        // groupIds = groupIds.concat(existingGroupIds);
 
-      // let groupIds = [];
-      // groupIds = groupIds.concat(existingGroupIds);
-
-      // Add the IDs of the existing groups to groupIds
-      // console.log("memberGroups", memberGroups);
-      // console.log("newgroups", newGroups);
-      // Check if the selectedGroups exists in memberGroups
-      const newGroups =
-        selectedGroups
+        // Add the IDs of the existing groups to groupIds
+        // console.log("memberGroups", memberGroups);
+        // console.log("newgroups", newGroups);
+        // Check if the selectedGroups exists in memberGroups
+        const newGroups =
           ?.filter(
             (group) =>
               !memberGroups?.map(({ name }) => name).includes(group.value)
           )
           .map(({ value }) => value) || [];
 
-      
+        // groupIds = selectedGroups?.map((group) => group.value);
 
-      // groupIds = selectedGroups?.map((group) => group.value);
-
-      // If selectedGroups doesn't exist, create a new group
-      let groupIds = [];
-      if (!!newGroups.length) {
-        const groupResponse = await supabase
-          .from("member_groups")
-          .insert(newGroups.map((name) => ({ name, created_by: user.id })))
-          .select();
-        
-        const { data: createdGroups, error: createGroupError } = groupResponse;
-        console.log("created groups", createdGroups);
-        if (createGroupError) {
-          console.error("Error creating new group:", createGroupError);
-        } else {
-          if (Array.isArray(createdGroups) && createdGroups.length > 0) {
-            groupIds = createdGroups.map(({ id }) => id);
+        // If selectedGroups doesn't exist, create a new group
+        let groupIds = [];
+        if (!!newGroups.length) {
+            .from("member_groups")
+            .insert(newGroups.map((name) => ({ name, created_by: user.id })))
+            .select();
+          
+          const { data: createdGroups, error: createGroupError } = groupResponse;
+          console.log("created groups", createdGroups);
+          if (createGroupError) {
+            console.error("Error creating new group:", createGroupError);
+          } else {
+            if (Array.isArray(createdGroups) && createdGroups.length > 0) {
+              groupIds = createdGroups.map(({ id }) => id);
+            }
           }
         }
-      }
 
-      // Create the new member
-      const memberUpdates = {
+        // Create the new member
+        const memberUpdates = {
         email: data.email,
         first_name: data.first_name,
         last_name: data.last_name,
