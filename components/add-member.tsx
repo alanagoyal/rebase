@@ -98,14 +98,13 @@ export default function AddMemberForm({ user }: { user: any }) {
         // groupIds = groupIds.concat(existingGroupIds);
 
         // Add the IDs of the existing groups to groupIds
-        // Removed console.log statements
+        // console.log("memberGroups", memberGroups);
+        // console.log("newgroups", newGroups);
         // Check if the selectedGroups exists in memberGroups
-        const newGroups =
-          ?.filter(
+        const newGroups = selectedGroups?.filter(
             (group) =>
               !memberGroups?.map(({ name }) => name).includes(group.value)
-          )
-          .map(({ value }) => value) || [];
+          ).map(({ value }) => value) || [];
 
         // groupIds = selectedGroups?.map((group) => group.value);
 
