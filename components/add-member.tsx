@@ -75,11 +75,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       } catch (error) {
         console.error("Error fetching member groups:", error);
       }
-      try {
-        fetchMemberGroups();
-      } catch (error) {
-        console.error("Error fetching member groups:", error);
-      }
+      fetchMemberGroups();
     }, [supabase, submitted]);
 
     interface MemberGroup {
