@@ -76,7 +76,6 @@ export default function EditMemberForm({
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        // console.log("member groups", data);
         setMemberGroups(data);
       }
     }
@@ -106,8 +105,6 @@ export default function EditMemberForm({
     }
   }, [existingGroups]);
 
-  // console.log("Select", selectedGroups);
-  // console.log("EIT", existingGroups);
   const existingGroupIds = existingGroups ? existingGroups.split(",") : [];
 
   // console.log("existingIDs", existingGroupIds);
@@ -129,7 +126,6 @@ export default function EditMemberForm({
 
     // Get the IDs of the selected groups that already exist in memberGroups
     // Get the IDs of the selected groups that already exist in memberGroups
-    const existingGroupIds = selectedGroups
       ?.filter(
         (group) => memberGroups?.map(({ name }) => name).includes(group.value),
       )
@@ -154,7 +150,6 @@ export default function EditMemberForm({
         .from("member_groups")
         .insert(newGroups.map((name) => ({ name })))
         .select();
-      console.log("gr", groupResponse);
       const { data: createdGroups, error: createGroupError } = groupResponse;
       console.log("created groups", createdGroups);
       if (createGroupError) {
@@ -178,7 +173,6 @@ export default function EditMemberForm({
         ? selectedGroups.map((group) => group.value)
         : [];
 
-      // console.log("SId", selectedGroupIds);
 
       if (!!selectedGroups?.length && member.id) {
         // Insert new associations
