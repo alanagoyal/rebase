@@ -68,7 +68,6 @@ export default function AddMemberForm({ user }: { user: any }) {
         if (error) {
           console.error("Error fetching member groups:", error);
         } else {
-          
           setSelectedGroups(null);
           setMemberGroups(data);
         }
