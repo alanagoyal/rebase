@@ -67,7 +67,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       if (error) {
         console.error("Error fetching member groups:", error);
       } else {
-        // console.log("member groups", data);
+        
         setSelectedGroups(null);
         setMemberGroups(data);
       }
@@ -81,8 +81,7 @@ export default function AddMemberForm({ user }: { user: any }) {
   }
 
   async function onSubmit(data: MemberFormValues) {
-    // console.log("gr", groupResponse);
-    // console.log("created groups", createdGroups);
+    
       // Get the IDs of the selected groups that already exist in memberGroups
       const existingGroupIds = selectedGroups
         ?.filter((group) =>
@@ -107,7 +106,7 @@ export default function AddMemberForm({ user }: { user: any }) {
           )
           .map(({ value }) => value) || [];
 
-      console.log("newgroups", newGroups);
+      
 
       // groupIds = selectedGroups?.map((group) => group.value);
 
@@ -118,7 +117,7 @@ export default function AddMemberForm({ user }: { user: any }) {
           .from("member_groups")
           .insert(newGroups.map((name) => ({ name, created_by: user.id })))
           .select();
-        console.log("gr", groupResponse);
+        
         const { data: createdGroups, error: createGroupError } = groupResponse;
         console.log("created groups", createdGroups);
         if (createGroupError) {
@@ -148,7 +147,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       }
       const memberID = newMember[0].id;
 
-      // console.log("SELECT", selectedGroups);
+      
 
       // Update the joins table to associate the member with the group
       if (!!selectedGroups?.length && memberID) {
@@ -181,7 +180,7 @@ export default function AddMemberForm({ user }: { user: any }) {
       setSubmitted(true);
       router.refresh();
     } catch (error) {
-      // console.log(error);
+      
     }
   }
 
