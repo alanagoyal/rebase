@@ -75,7 +75,11 @@ export default function AddMemberForm({ user }: { user: any }) {
       } catch (error) {
         console.error("Error fetching member groups:", error);
       }
-      fetchMemberGroups();
+      try {
+        fetchMemberGroups();
+      } catch (error) {
+        console.error("Error fetching member groups:", error);
+      }
     }, [supabase, submitted]);
 
     interface MemberGroup {
@@ -101,10 +105,12 @@ export default function AddMemberForm({ user }: { user: any }) {
         // console.log("memberGroups", memberGroups);
         // console.log("newgroups", newGroups);
         // Check if the selectedGroups exists in memberGroups
-        const newGroups = selectedGroups?.filter(
+        const newGroups =
+          ?.filter(
             (group) =>
               !memberGroups?.map(({ name }) => name).includes(group.value)
-          ).map(({ value }) => value) || [];
+          )
+          .map(({ value }) => value) || [];
 
         // groupIds = selectedGroups?.map((group) => group.value);
 
