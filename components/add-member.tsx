@@ -147,8 +147,7 @@ export default function AddMemberForm({ user }: { user: any }) {
         .select();
       if (memberError) {
         throw memberError;
-      }
-      const memberID = newMember[0].id;
+      } const memberID = newMember[0].id;
 
       
 
