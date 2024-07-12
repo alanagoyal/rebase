@@ -1,4 +1,4 @@
-[Rebase](https://re-base.vercel.app) is an open-source email platform purpose-built for sending investor updates. As a founder, I send monthly update emails to my investors to share what I've been up to using a product called [Cabal](https://getcabal.com). I’m a huge fan of their product, so I wanted to try to build my own from scratch.
+Rebase is an open-source email platform purpose-built for sending investor updates. As a founder, I send monthly update emails to my investors to share what I've been up to using a product called [Cabal](https://getcabal.com). I’m a huge fan of their product, so I wanted to try to build my own from scratch.
 
 Please note that the product is only designed for verified domains. If you want to use it, you'll need to register a domain and verify it with [Resend](https://resend.com) (see below).
 
