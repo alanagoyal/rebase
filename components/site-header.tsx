@@ -40,7 +40,6 @@ export async function SiteHeader() {
                   <span className="sr-only">GitHub</span>
                 </div>
               </Link>
-              <ThemeToggle />
               {user && <UserNav user={user} />}
             </nav>
           </div>
